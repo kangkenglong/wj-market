@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     on_show_nav: function(flag){
-      console.error(flag);
       this.is_show_nav = flag;
     }
   }

@@ -92,8 +92,8 @@
 	.m_g_t{
 		width: 100%;
 		padding-bottom: 0.3rem;
-		font-size: 0.28rem;
-		color: #d1d1d1;
+		font-size: 0.25rem;
+		color: #686868;
 		display: flex;
 		border-bottom: 0.02rem solid #d9d9d9;
 		justify-content: space-between;
@@ -103,7 +103,7 @@
 	}
 	.m_g_i{
 		width: 100%;
-		padding: 0.4rem 0px;
+		padding: 0.2rem 0px;
 		display: flex;
 		border-bottom: 0.02rem solid #d9d9d9;
 	}
@@ -119,7 +119,7 @@
 		color: #000;
 	}
 	.g_i_i p:nth-child(2){
-		color: #c1c1c1;
+		color: #888;
 		margin-top: 0.1rem;
 	}
 	.g_i_i p:nth-child(3){
@@ -134,10 +134,10 @@
 		font-size: 0.33rem;
 		color: #000;
 		text-align: right;
-		padding: 0.3rem 0px;
+		padding: 0.3rem 0px 0px;
 	}
 	.m_g_p span{
 		font-size: 0.2rem;
-		color: #a7a7a7;
+		color: #686868;
 	}
 </style>

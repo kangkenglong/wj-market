@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="main">
+		<div class="main" ref="index_main">
 			<router-link to="/search" class="m_search">
 				<p>搜索商品</p>
 			</router-link>
@@ -19,7 +19,7 @@
 				<div class="m_c_g">
 					<div class="c_g_top">
 						<p class="c_g_tlt">今日热销</p>
-						<span class="c_g_mor">更多</span>
+						<span class="c_g_mor" @click="on_toGoodsList">更多</span>
 					</div>
 					<div class="c_g_god">
 						<div class="goods" v-for="goods in test_data" :key="goods.id">
@@ -28,6 +28,24 @@
 								<img class="g_img" src="../assets/images/g0.png" />
 								<p class="g_nme">{{goods.name}}</p>
 								<p class="g_pri">￥ {{goods.price}}</p>
+							</router-link>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="m_cnt0">
+				<div class="m_c_g">
+					<div class="c_g_top">
+						<p class="c_g_tlt">优惠专区</p>
+						<span class="c_g_mor" @click="on_toYh">更多</span>
+					</div>
+					<div class="c_g_god">
+						<div class="goods" v-for="goods in test_data" :key="goods.id">
+							<router-link to="/goods_info" style="display: block;">
+								<!-- <img src="../assets/images/g0.png"/> -->
+								<img class="g_img" src="../assets/images/g0.png" />
+								<p class="g_nme">{{goods.name}}</p>
+								<p class="g_pri">￥ {{goods.price}}&nbsp;&nbsp;<del>¥ 99.00</del></p>
 							</router-link>
 						</div>
 					</div>
@@ -44,12 +62,10 @@
 		data(){
 			return {
 				test_data: [
-					{"id": 1, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
+					{"id": 1, "price": 999, "name": "", "img": "../assets/images/g0.png"},
 					{"id": 2, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 3, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 4, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 5, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 6, "price": 999, "name": "开关", "img": "../assets/images/g0.png"}
 				]
 			}
 		},
@@ -68,9 +84,38 @@
 				 }
 			})
 		},
-		created(){
-			console.error(1);
+		mounted(){
+			// console.error(1);
 			this.$bus.emit("show_nav", true);
+			// this.on_cmd_get_goods_list();
+			// this.$ajax.get("/api/pagingLjContactUsList", function(req, res){
+			// 	console.error(res);
+			// })
+			this.$util.set_scroll_el(this.$refs.index_main).ser_scroll_event(this, this.on_scroll_cb);
+		},
+		methods: {
+			on_toYh: function(){
+				this.$router.push("/youhui");
+			},
+			on_toGoodsList: function(){
+				this.$router.push("/goodslist");
+			},
+			on_cmd_get_goods_list: function(){
+				let self = this;
+				this.$ajax.get(this.$url.goodslist).then(function (res) {
+					console.error("商品列表", res.data);
+					let data = res.data;
+					data.body.list.forEach( item => {
+						let goods = self.$base.goods();
+						// if (item["goodsDiscount"]) 
+					})
+				})
+				console.error(this.$url);
+			},
+			on_scroll_cb: function() {
+				console.error("处理滚动回调");
+				this.$util.scroll_flag = true;
+			}
 		}
 	}
 </script>
@@ -111,11 +156,15 @@
 		width: 7.5rem;
 		height: 3rem;
 	}
-	.m_cnt{
+	.m_cnt, .m_cnt0{
 		width: 100%;
 		padding: 0.2rem;
 		margin-bottom: 1rem;
 		background: #fff;
+		border-bottom: 0.02rem solid #ccc;
+	}
+	.m_cnt{
+		margin-bottom: 0px;
 	}
 	.m_c_g{
 		width: 100%;
@@ -154,8 +203,12 @@
 		color: #000;
 	}
 	.g_pri{
-		font-size: 0.25rem;
+		font-size: 0.3rem;
 		color: red;
+	}
+	.g_pri del{
+		font-size: 0.2rem;
+		color: #606060;
 	}
 	.c_g_tlt, .c_g_mor{
 		font-size: 0.3rem;

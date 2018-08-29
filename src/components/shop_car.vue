@@ -27,7 +27,7 @@
 				<p>全选</p>
 				<p class="s_l_p">合计：¥999</p>
 			</div>
-			<div class="s_r">结 算</div>
+			<div class="s_r" @click="on_tosel">结 算</div>
 		</div>
 	</div>
 </template>
@@ -50,6 +50,11 @@
 		},
 		created(){
 			this.$bus.emit("show_nav", true);
+		},
+		methods: {
+			on_tosel: function(){
+				this.$router.push("/settlement");
+			}
 		}
 	}
 </script>

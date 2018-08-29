@@ -9,6 +9,17 @@ import Collection from '@/components/collection'
 import Order from '@/components/order'
 import Vip from '@/components/vip'
 import Search from '@/components/search'
+import Main_jf from '@/components/main_jf'
+import Main_dh from '@/components/main_dh'
+import Jf_shop from '@/components/jf_shop'
+import Team from '@/components/team'
+import Yongjin from '@/components/yongjin'
+import Tixian from '@/components/tixian'
+import Youhui from '@/components/youhui'
+import Settlement from '@/components/settlement'
+import Address from '@/components/address'
+import Addr_info from '@/components/addr_info'
+import Goods_list from '@/components/goods_list'
 // import Search from '@/components/search'
 
 Vue.use(Router)
@@ -59,6 +70,61 @@ export default new Router({
       path: '/search',
       name: 'Search',
       component: Search
+    },
+    {
+      path: '/main_jf',
+      name: 'Main_jf',
+      component: Main_jf
+    },
+    {
+      path: '/main_dh',
+      name: 'Main_dh',
+      component: Main_dh
+    },
+    {
+      path: '/jf_shop',
+      name: 'Jf_shop',
+      component: Jf_shop
+    },
+    {
+      path: '/team',
+      name: 'Team',
+      component: Team
+    },
+    {
+      path: '/yongjin',
+      name: 'Yongjin',
+      component: Yongjin
+    },
+    {
+      path: '/tixian',
+      name: 'Tixian',
+      component: Tixian
+    },
+    {
+      path: '/youhui',
+      name: 'Youhui',
+      component: Youhui
+    },
+    {
+      path: '/settlement',
+      name: 'Settlement',
+      component: Settlement
+    },
+    {
+      path: '/address',
+      name: 'Address',
+      component: Address
+    },
+    {
+      path: '/addrinfo',
+      name: 'Addr_info',
+      component: Addr_info
+    },
+    {
+      path: '/goodslist',
+      name: 'Goods_list',
+      component: Goods_list
     },
     // {
     //   path: '/search',

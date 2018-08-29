@@ -35,9 +35,19 @@
 			<p>会员中心</p>
 			<img class="a_o_i" src="../assets/images/icon16.png">
 		</router-link>
+		<router-link to="/main_jf" class="m_a_o item">
+			<img src="../assets/images/icon23.png">
+			<p>我的积分：<span class="m_jf">999</span></p>
+			<img class="a_o_i" src="../assets/images/icon16.png">
+		</router-link>
 		<router-link to="/collection" class="m_a_o item">
 			<img src="../assets/images/icon19.png">
 			<p>我的收藏</p>
+			<img class="a_o_i" src="../assets/images/icon16.png">
+		</router-link>
+		<router-link to="/address" class="m_a_o item">
+			<img src="../assets/images/icon22.png">
+			<p>地址管理</p>
 			<img class="a_o_i" src="../assets/images/icon16.png">
 		</router-link>
 	</div>
@@ -109,7 +119,7 @@
 		/* height: 1rem; */
 		display: flex;
 		background: #fff;
-		padding: 0.2rem 0.4rem;
+		padding: 0.2rem 0.2rem;
 		position: relative;
 		border-top: 0.02rem solid #ccc;
 	}
@@ -118,7 +128,7 @@
 		/* height: 1rem; */
 		display: flex;
 		background: #fff;
-		padding: 0.2rem 0.4rem;
+		padding: 0.2rem 0.2rem;
 		position: relative;
 		margin-top: 0.2rem;
 	}
@@ -139,5 +149,9 @@
 		right: 0.4rem;
 		top: 50%;
 		margin-top: -0.15rem;
+	}
+	.m_jf{
+		color: red;
+		font-size: 0.3rem;
 	}
 </style>
