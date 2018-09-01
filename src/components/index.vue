@@ -92,6 +92,7 @@
 			// 	console.error(res);
 			// })
 			this.$util.set_scroll_el(this.$refs.index_main).ser_scroll_event(this, this.on_scroll_cb);
+			this.$util.scroll_to(this.$util.scroll_top);
 		},
 		methods: {
 			on_toYh: function(){
@@ -116,6 +117,12 @@
 				console.error("处理滚动回调");
 				this.$util.scroll_flag = true;
 			}
+		},
+		beforeRouteLeave (to, from, next) {
+			// 导航离开该组件的对应路由时调用
+			// 可以访问组件实例 `this`
+			this.$util.save_scroll_top();
+			next();
 		}
 	}
 </script>

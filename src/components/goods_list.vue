@@ -17,15 +17,15 @@
 				<img :src="img_xl">
 			</div>
 		</div>
-		<div class="m_cnt">
+		<div class="m_cnt" ref="cnt">
 			<div class="m_c_g">
 				<div class="c_g_god">
 					<div class="goods" v-for="goods in test_data" :key="goods.id">
 						<router-link to="/goods_info" style="display: block;">
 							<!-- <img src="../assets/images/g0.png"/> -->
-							<img class="g_img" src="../assets/images/g0.png" />
-							<p class="g_nme">{{goods.name}}</p>
-							<p class="g_pri">￥ {{goods.price}}&nbsp;&nbsp;</p>
+							<img class="g_img" :src="goods.imageUrl" />
+							<p class="g_nme">{{goods.goodsName}}</p>
+							<p class="g_pri">￥ {{goods.goodsPrice}}&nbsp;&nbsp;</p>
 						</router-link>
 					</div>
 				</div>
@@ -43,25 +43,43 @@
 				cnum_jg: 0,
 				img_xl: require("../assets/images/icon28_0.png"),
 				cnum_xl: 0,
+				page: 1,
+				pageSize: 0,
+				is_net: false,
 				test_data: [
-					{"id": 1, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 2, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 3, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 4, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 5, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 6, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 7, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 8, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 9, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 				]
 			}
 		},
-		created(){
+		mounted(){
 			this.$bus.emit("show_nav", false);
+			this.on_cmd_get_goods_list();
+			this.$util.set_scroll_el(this.$refs.cnt, 10).ser_scroll_event(this, this.on_load_more_goods);
 		},
 		methods: {
 			on_back: function(){
 				this.$router.go(-1);
+			},
+			on_cmd_get_goods_list: function(){
+				let self = this;
+				let goods_arr = self.test_data;
+				self.$ajax.get(self.$url.goodslist + "?pageNum=" + self.page +"&pageSize=8").then(function (res) {
+					console.error("商品列表", res.data);
+					let data = res.data;
+					self.pageSize = data.body.pages;
+					data.body.list.forEach( item => {
+						let goods = new self.$base.goods();
+						goods.goodsId = item["goodsId"];
+						goods.goodsDiscount = item["goodsDiscount"];
+						goods.goodsName = item["goodsName"];
+						goods.goodsPrice = item["goodsPrice"];
+						goods.imageUrl = item["imageUrl"];
+						goods.goodsSale = item["goodsSale"];
+						goods_arr.push(goods);
+					})
+					self.$util.scroll_flag = true;
+					self.is_net = false;
+				})
+				self.test_data = goods_arr;
 			},
 			on_cut_filtare: function(type){
 				console.error(type);
@@ -97,6 +115,17 @@
 							this.cnum_xl--;
 						}
 						break;
+				}
+			},
+			on_load_more_goods: function() {
+				console.error("处理滚动回调");
+				if (this.page < this.pageSize && !this.is_net) {
+					this.is_net = true;
+					this.page++;
+					this.on_cmd_get_goods_list();
+				}
+				else {
+					this.$util.scroll_flag = true;
 				}
 			}
 		}

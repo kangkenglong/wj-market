@@ -1,12 +1,17 @@
 
 let Util={
 	// 滚动文档对象
-	scroll_el: null,
 	self: null,
+	scroll_el: null,
 	scroll_callback: null,
 	scroll_flag: true,
-	set_scroll_el: function(el) {
+	scroll_top: 0,
+	scroll_dis: 0,
+	set_scroll_el: function(el, dis) {
+		if (!el) return;
+		if(dis == undefined) return;
 		this.scroll_el = el;
+		this.scroll_dis = dis;
 		return this;
 	},
 	ser_scroll_event: function(call, callback) {
@@ -25,10 +30,16 @@ let Util={
 		let oDiv = self.scroll_el;
 		console.error(oDiv.scrollTop, oDiv.offsetHeight, oDiv.scrollHeight);
 		let topHeight = oDiv.scrollTop;
-		if (topHeight + oDiv.offsetHeight + 100 >= oDiv.scrollHeight && self.scroll_flag) {
+		if (topHeight + oDiv.offsetHeight + self.scroll_dis >= oDiv.scrollHeight && self.scroll_flag) {
 			self.scroll_flag = false;
 			Util.scroll_callback.call(self.self);
 		}
+	},
+	save_scroll_top: function() {
+		this.scroll_top = this.scroll_el.scrollTop;
+	},
+	scroll_to: function(num) {
+		this.scroll_el.scrollTop = num;
 	}
 }
 export default Util

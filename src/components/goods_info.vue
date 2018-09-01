@@ -71,8 +71,8 @@
 		},
 		methods: {
 			on_back: function(){
-				return window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
-				// this.$router.go(-1);
+				// return window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
+				this.$router.go(-1);
 			},
 			on_coll: function(){
 				this.islove = !this.islove;
