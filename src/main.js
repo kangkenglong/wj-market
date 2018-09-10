@@ -19,6 +19,10 @@ Vue.prototype.$base = base;
 
 Vue.prototype.$util = util;
 
+window.CODE = {
+	SUCCESS: 10000
+}
+
 new Vue({
   render: h => h(App),
   router
