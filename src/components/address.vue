@@ -5,15 +5,13 @@
 			<p>地址管理</p>
 		</div>
 		<div class="cnt">
-			<div class="c_a">
-				<div class="a_b">
-					<router-link to="/addrinfo">
-						<img src="../assets/images/icon27.png">
-					</router-link>
+			<div class="c_a" v-for="addr in addr_list" :key="addr.addressId">
+				<div class="a_b" @click="on_to_addrinfo(addr)">
+					<img src="../assets/images/icon27.png">
 				</div>
 				<div class="a_i">
-					<p class="i_n">lalala 17600000000</p>
-					<p class="i_i">广东省深圳市南山区南山大道向南瑞峰花园A座区</p>
+					<p class="i_n">{{addr.receiver}} {{addr.phone}}</p>
+					<p class="i_i">{{addr.province}}{{addr.city}}{{addr.county}}{{addr.street}}</p>
 				</div>
 				<div class="a_d">
 					<p>删除</p>
@@ -30,11 +28,14 @@
 	export default {
 		data(){
 			return {
-
+				addr_list: []
 			}
 		},
 		created(){
 			this.$bus.emit("show_nav", false);
+		},
+		mounted(){
+			this.net_cmd_addr_list();
 		},
 		methods: {
 			on_back: function(){
@@ -42,6 +43,33 @@
 			},
 			on_add: function(){
 				this.$router.push("/addrinfo")
+			},
+			on_to_addrinfo: function(data){
+				console.error(data);
+				this.$bus.emit("save_data", data);
+				this.$router.push({path: "/addrinfo", query: data});
+			},
+			net_cmd_addr_list: function(){
+				let self = this;
+				this.$ajax.get(this.$url.addrlist).then(function (res) {
+					console.log(res.data.body.list);
+					let addr_list = [];
+					res.data.body.list.forEach(item => {
+						let addr =  new self.$base.address();
+						addr.addressId = item["addressId"];
+						addr.id = item["id"];
+						addr.city = item["city"];
+						addr.county = item["county"];
+						addr.defaultInd = item["defaultInd"];
+						addr.phone = item["phone"];
+						addr.postCode = item["postCode"];
+						addr.province = item["province"];
+						addr.receiver = item["receiver"];
+						addr.street = item["street"];
+						addr_list.push(addr);
+					})
+					self.addr_list = addr_list;
+				})
 			}
 		}
 	}
@@ -86,7 +114,7 @@
 		line-height: 0.3rem;
 	}
 	.a_d{
-		width: 0.6rem;
+		width: 0.65rem;
 		display: flex;
 		justify-content: center;
 		/* vertical-align: middle; */

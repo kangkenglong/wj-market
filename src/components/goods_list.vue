@@ -30,6 +30,7 @@
 					</div>
 				</div>
 			</div>
+			<p class="m_tips" v-show="is_tips">没有更多的商品</p>
 		</div>
 	</div>
 </template>
@@ -40,12 +41,13 @@
 			return {
 				fil_sta: "zh",
 				img_jg: require("../assets/images/icon28_0.png"),
-				cnum_jg: 0,
+				cnum_jg: 0,// 0位价格大->小 1位价格小->大
 				img_xl: require("../assets/images/icon28_0.png"),
-				cnum_xl: 0,
+				cnum_xl: 0,// 0为销量大->小 1为销量小->大
 				page: 1,
 				pageSize: 0,
-				is_net: false,
+				is_net: false,// 是否在请求中 防止滚动到末尾多次请求数据
+				is_tips: false,// 是否显示已无更多的商品提示
 				test_data: [
 				]
 			}
@@ -78,11 +80,12 @@
 					})
 					self.$util.scroll_flag = true;
 					self.is_net = false;
+					self.on_filtare_arr(goods_arr);
 				})
-				self.test_data = goods_arr;
 			},
 			on_cut_filtare: function(type){
 				console.error(type);
+				if (this.fil_sta == type && type == "zh") return;
 				this.fil_sta = type;
 				switch(type) {
 					case "zh":
@@ -90,6 +93,9 @@
 						this.img_xl = require("../assets/images/icon28_0.png");
 						this.cnum_jg = 0;
 						this.cnum_xl = 0;
+
+						this.on_reset_net_data();
+						this.on_cmd_get_goods_list();
 						break;
 					case "jg":
 						this.img_xl = require("../assets/images/icon28_0.png");
@@ -102,6 +108,9 @@
 							this.img_jg = require("../assets/images/icon28_2.png");
 							this.cnum_jg--;
 						}
+
+						this.on_reset_net_data();
+						this.on_cmd_get_goods_list();
 						break;
 					case "xl":
 						this.img_jg = require("../assets/images/icon28_0.png");
@@ -114,18 +123,67 @@
 							this.img_xl = require("../assets/images/icon28_2.png");
 							this.cnum_xl--;
 						}
+
+						this.on_reset_net_data();
+						this.on_cmd_get_goods_list();
 						break;
 				}
+			},
+			on_filtare_arr: function(arr) {
+				if (this.fil_sta == "zh") {
+					this.test_data = arr;
+				}
+				else if (this.fil_sta == "jg") {
+					if (this.cnum_jg == 1) {
+						arr.sort(function (a, b) {
+							return a.goodsPrice - b.goodsPrice;
+						})
+						this.test_data = arr;
+					}
+					else {
+						arr.sort(function (a, b) {
+							return b.goodsPrice - a.goodsPrice;
+						})
+						this.test_data = arr;
+					}
+					console.error("价格数据", this.test_data);
+				}
+				else if (this.fil_sta == "xl") {
+					if (this.cnum_xl == 1) {
+						arr.sort(function (a, b) {
+							return a.goodsSale - b.goodsSale;
+						})
+						this.test_data = arr;
+					}
+					else {
+						arr.sort(function (a, b) {
+							return b.goodsSale - a.goodsSale;
+						})
+						this.test_data = arr;
+					}
+					console.error("销量数据", this.test_data);
+				}
+			},
+			arr_sort: function(a, b) {
+				return a - b;
+			},
+			on_reset_net_data: function() {
+				this.page = 1;
+				this.is_tips = false;
+				this.test_data = [];
+				this.$util.scroll_to(0);
 			},
 			on_load_more_goods: function() {
 				console.error("处理滚动回调");
 				if (this.page < this.pageSize && !this.is_net) {
+					this.is_tips = false;
 					this.is_net = true;
 					this.page++;
 					this.on_cmd_get_goods_list();
 				}
 				else {
 					this.$util.scroll_flag = true;
+					this.is_tips = true;
 				}
 			}
 		}
@@ -202,5 +260,12 @@
 	}
 	.f_s{
 		color: red;
+	}
+	.m_tips{
+		width: 100%;
+		height: 0.6rem;
+		text-align: center;
+		line-height: 0.6rem;
+		color: #999999;
 	}
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="main" ref="index_main">
+		<div class="main">
 			<router-link to="/search" class="m_search">
 				<p>搜索商品</p>
 			</router-link>
@@ -62,7 +62,7 @@
 		data(){
 			return {
 				test_data: [
-					{"id": 1, "price": 999, "name": "", "img": "../assets/images/g0.png"},
+					{"id": 1, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 2, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 3, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 4, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
@@ -84,44 +84,33 @@
 				 }
 			})
 		},
-		mounted(){
+		created(){
 			// console.error(1);
 			this.$bus.emit("show_nav", true);
+			// this.$bus.emit("show_nav", true);
 			// this.on_cmd_get_goods_list();
 			// this.$ajax.get("/api/pagingLjContactUsList", function(req, res){
 			// 	console.error(res);
 			// })
-			this.$util.set_scroll_el(this.$refs.index_main).ser_scroll_event(this, this.on_scroll_cb);
-			this.$util.scroll_to(this.$util.scroll_top);
 		},
 		methods: {
 			on_toYh: function(){
 				this.$router.push("/youhui");
 			},
-			on_toGoodsList: function(){
-				this.$router.push("/goodslist");
-			},
 			on_cmd_get_goods_list: function(){
-				let self = this;
 				this.$ajax.get(this.$url.goodslist).then(function (res) {
-					console.error("商品列表", res.data);
-					let data = res.data;
-					data.body.list.forEach( item => {
-						let goods = self.$base.goods();
-						// if (item["goodsDiscount"]) 
-					})
+					console.log(res.data);
 				})
 				console.error(this.$url);
 			},
-			on_scroll_cb: function() {
-				console.error("处理滚动回调");
-				this.$util.scroll_flag = true;
-			}
+			on_toGoodsList: function(){
+				this.$router.push("/goodslist");
+			},
 		},
 		beforeRouteLeave (to, from, next) {
 			// 导航离开该组件的对应路由时调用
 			// 可以访问组件实例 `this`
-			this.$util.save_scroll_top();
+			// this.$util.save_scroll_top();
 			next();
 		}
 	}

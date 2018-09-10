@@ -25,7 +25,7 @@
 			<div class="s_l">
 				<span class="s_l_s"></span>
 				<p>全选</p>
-				<p class="s_l_p">合计：¥999</p>
+				<p class="s_l_p">合计：¥0</p>
 			</div>
 			<div class="s_r" @click="on_tosel">结 算</div>
 		</div>
@@ -38,18 +38,19 @@
 		data(){
 			return {
 				test_data: [
-					{'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
-					{'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
-					{'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
-					{'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
-					{'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
-					{'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
-					{'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
+					// {'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
+					// {'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
+					// {'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
+					// {'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
+					// {'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
+					// {'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
+					// {'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
 				]
 			}
 		},
 		created(){
 			this.$bus.emit("show_nav", true);
+			this.$bus.emit("show_noinfo", [true, "亲，购物车空空的"]);
 		},
 		methods: {
 			on_tosel: function(){
@@ -178,9 +179,9 @@
 		width: 0.5rem;
 		height: 100%;
 		background: url('../assets/images/icon5.png') no-repeat center center;
-		background-size: 100% 100%;
+		background-size: 0.4rem 0.4rem;
 		margin-left: 0.06rem;
-		margin-right: 0.1rem;
+		/* margin-right: 0.1rem; */
 	}
 	.s_l p{
 		font-size: 0.3rem;

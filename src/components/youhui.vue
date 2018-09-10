@@ -4,19 +4,6 @@
 			<span class="h_back" @click="on_back"></span>
 			<p>优惠专区</p>
 		</div>
-		<div class="filtrae">
-			<div @click="on_cut_filtare('zh')">
-				<p :class="{'f_s': fil_sta == 'zh' }">综合</p>
-			</div>
-			<div  @click="on_cut_filtare('jg')">
-				<p :class="{'f_s': fil_sta == 'jg' }">价格</p>
-				<img :src="img_jg">
-			</div>
-			<div  @click="on_cut_filtare('xl')">
-				<p :class="{'f_s': fil_sta == 'xl' }">销量</p>
-				<img :src="img_xl">
-			</div>
-		</div>
 		<div class="m_cnt">
 			<div class="m_c_g">
 				<div class="c_g_god">
@@ -38,11 +25,6 @@
 	export default {
 		data(){
 			return {
-				fil_sta: "zh",
-				img_jg: require("../assets/images/icon28_0.png"),
-				cnum_jg: 0,
-				img_xl: require("../assets/images/icon28_0.png"),
-				cnum_xl: 0,
 				test_data: [
 					{"id": 1, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
 					{"id": 2, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
@@ -62,42 +44,6 @@
 		methods: {
 			on_back: function(){
 				this.$router.go(-1);
-			},
-			on_cut_filtare: function(type){
-				console.error(type);
-				this.fil_sta = type;
-				switch(type) {
-					case "zh":
-						this.img_jg = require("../assets/images/icon28_0.png");
-						this.img_xl = require("../assets/images/icon28_0.png");
-						this.cnum_jg = 0;
-						this.cnum_xl = 0;
-						break;
-					case "jg":
-						this.img_xl = require("../assets/images/icon28_0.png");
-						this.cnum_xl = 0;
-						if (this.cnum_jg == 0) {
-							this.img_jg = require("../assets/images/icon28_1.png");
-							this.cnum_jg++;
-						}
-						else {
-							this.img_jg = require("../assets/images/icon28_2.png");
-							this.cnum_jg--;
-						}
-						break;
-					case "xl":
-						this.img_jg = require("../assets/images/icon28_0.png");
-						this.cnum_jg = 0;
-						if (this.cnum_xl == 0) {
-							this.img_xl = require("../assets/images/icon28_1.png");
-							this.cnum_xl++;
-						}
-						else {
-							this.img_xl = require("../assets/images/icon28_2.png");
-							this.cnum_xl--;
-						}
-						break;
-				}
 			}
 		}
 	}
@@ -106,7 +52,7 @@
 <style scoped>
 	.m_cnt{
 		width: 100%;
-		height: calc(100% - 1.7rem);
+		height: calc(100% - 1rem);
 		overflow-y: scroll;
 		padding: 0.2rem;
 		/* margin-bottom: 1rem; */
@@ -152,26 +98,5 @@
 	}
 	.c_g_tlt, .c_g_mor{
 		font-size: 0.3rem;
-	}
-	.filtrae{
-		width: 100%;
-		height: 0.7rem;
-		background: #ffffff;
-		display: flex;
-		justify-content: space-around;
-		align-items:  center;
-		font-size: 0.3rem;
-		color: #686868;
-	}
-	.filtrae div{
-		display: flex;
-	}
-	.filtrae img{
-		width: 0.2rem;
-		height: 0.3rem;
-		margin-left: 0.05rem;
-	}
-	.f_s{
-		color: red;
 	}
 </style>
