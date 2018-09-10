@@ -7,6 +7,7 @@ import Shop_Car from '@/components/shop_car'
 import Main from '@/components/main'
 import Collection from '@/components/collection'
 import Order from '@/components/order'
+import Order_Info from '@/components/order_info'
 import Vip from '@/components/vip'
 import Search from '@/components/search'
 import Main_jf from '@/components/main_jf'
@@ -60,6 +61,11 @@ export default new Router({
       path: '/order',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '/order_info',
+      name: 'Order_Info',
+      component: Order_Info
     },
     {
       path: '/vip',
