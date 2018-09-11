@@ -23,6 +23,8 @@ Vue.prototype.CODE = {
 	SUCCESS: 10000
 }
 
+// 777
+
 new Vue({
   render: h => h(App),
   router
