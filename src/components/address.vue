@@ -4,7 +4,7 @@
 			<span class="h_back" @click="on_back"></span>
 			<p>地址管理</p>
 		</div>
-		<div class="cnt">
+		<div class="cnt" ref="cnt">
 			<div class="c_a" v-for="addr in addr_list" :key="addr.addressId">
 				<div class="a_b" @click="on_to_addrinfo(addr)">
 					<img src="../assets/images/icon27.png">
@@ -17,6 +17,7 @@
 					<p>删除</p>
 				</div>
 			</div>
+			<p class="m_tips" v-show="is_tips">没有更多的信息</p>
 		</div>
 		<div class="btn">
 			<p @click="on_add">新&nbsp;&nbsp;&nbsp;增</p>
@@ -28,7 +29,11 @@
 	export default {
 		data(){
 			return {
-				addr_list: []
+				addr_list: [],
+				is_net: false,
+				is_tips: false,
+				pageNum: 1,
+				pages: 0
 			}
 		},
 		created(){
@@ -36,6 +41,7 @@
 		},
 		mounted(){
 			this.net_cmd_addr_list();
+			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_addr);
 		},
 		methods: {
 			on_back: function(){
@@ -51,25 +57,44 @@
 			},
 			net_cmd_addr_list: function(){
 				let self = this;
-				this.$ajax.get(this.$url.addrlist).then(function (res) {
-					console.log(res.data.body.list);
-					let addr_list = [];
-					res.data.body.list.forEach(item => {
-						let addr =  new self.$base.address();
-						addr.addressId = item["addressId"];
-						addr.id = item["id"];
-						addr.city = item["city"];
-						addr.county = item["county"];
-						addr.defaultInd = item["defaultInd"];
-						addr.phone = item["phone"];
-						addr.postCode = item["postCode"];
-						addr.province = item["province"];
-						addr.receiver = item["receiver"];
-						addr.street = item["street"];
-						addr_list.push(addr);
-					})
-					self.addr_list = addr_list;
+				this.$ajax.get(this.$url.addrlist + "&pageSize=12&pageNum=" + self.pageNum).then(function (res) {
+					console.error(res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						let addr_list = self.addr_list;
+						res.data.body.list.forEach(item => {
+							let addr =  new self.$base.address();
+							addr.addressId = item["addressId"];
+							addr.id = item["id"];
+							addr.city = item["city"];
+							addr.county = item["county"];
+							addr.defaultInd = item["defaultInd"];
+							addr.phone = item["phone"];
+							addr.postCode = item["postCode"];
+							addr.province = item["province"];
+							addr.receiver = item["receiver"];
+							addr.street = item["street"];
+							addr_list.push(addr);
+						})
+						self.pages = res.data.body.pages;
+						self.addr_list = addr_list;
+					}
+					else {
+						this.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
+					}
 				})
+			},
+			on_load_more_addr: function() {
+				console.error("处理滚动回调");
+				if (this.pages > this.pageNum && !this.is_net) {
+					this.is_tips = false;
+					this.is_net = true;
+					this.pageNum++;
+					this.net_cmd_addr_list();
+				}
+				else {
+					this.$util.scroll_flag = true;
+					this.is_tips = true;
+				}
 			}
 		}
 	}
@@ -144,5 +169,12 @@
 		font-size: 0.3rem;
 		text-align: center;
 		line-height: 0.7rem;
+	}
+	.m_tips{
+		width: 100%;
+		height: 0.6rem;
+		text-align: center;
+		line-height: 0.6rem;
+		color: #999999;
 	}
 </style>

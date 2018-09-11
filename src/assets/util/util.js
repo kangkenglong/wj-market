@@ -3,22 +3,21 @@ let Util={
 	self: null,
 	scroll_el: null,
 	scroll_callback: null,
-	scroll_flag: true,
+	scroll_flag: true,// 是否开启滚动执行回调
 	scroll_top: 0,
-	scroll_dis: 0,
-	set_scroll_el: function(el, dis) {
+	scroll_dis: 0,// 触发距离
+	set_scroll_el: function(el, dis, call, callback) {
 		if (!el) return;
 		if(dis == undefined) return;
 		this.scroll_el = el;
 		this.scroll_dis = dis;
-		return this;
-	},
-	ser_scroll_event: function(call, callback) {
 		if (typeof callback != "function") return;
 		if (!this.scroll_el) return;
 		this.self = call;
 		this.scroll_callback = callback;
 		this.scroll_el.addEventListener("scroll", this.scroll_event);
+	},
+	ser_scroll_event: function(call, callback) {
 	},
 	del_scroll_event: function() {
 		if (!this.scroll_el) return;

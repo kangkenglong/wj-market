@@ -5,25 +5,25 @@
 			<p>会员中心</p>
 		</div>
 		<div class="info">
-			<img src="../assets/images/bg1.jpg">
+			<img :src="headImgUrl">
 			<div class="i_i">
-				<p class="i_n">不给摘的小橙花</p>
-				<p class="i_t">推荐人：啦啦啦</p>
-				<p class="i_y">邀请码：JD888888</p>
+				<p class="i_n">{{username}}</p>
+				<p class="i_t">推荐人：{{introducer}}</p>
+				<p class="i_y">邀请码：{{invateCode}}</p>
 			</div>
 		</div>
 		<div class="g_d">
 			<p class="g_t">累计佣金：</p>
-			<p class="g_v">999.99 <span>元</span></p>
+			<p class="g_v">{{totalAmt}} <span>元</span></p>
 		</div>
 		<div class="g_d">
 			<p class="g_t">可提现佣金：</p>
-			<p class="g_v">999.99 <span>元</span></p>
+			<p class="g_v">{{canDrawAmt}} <span>元</span></p>
 			<div class="g_b">提 现</div>
 		</div>
 		<div class="g_d">
 			<p class="g_t">成功提现佣金：</p>
-			<p class="g_v">999.99 <span>元</span></p>
+			<p class="g_v">{{cashAmt}} <span>元</span></p>
 		</div>
 		<router-link to="/yongjin" class="m_m_c item">
 			<img src="../assets/images/icon24.png">
@@ -45,12 +45,48 @@
 
 <script type="text/javascript">
 	export default {
+		data(){
+			return {
+				username: "",// 用户wx名字
+				headImgUrl: "",
+				introducer: "",// 推荐人
+				invateCode: "",// 邀请码
+				totalAmt: "",// 累计佣金
+				cashAmt: "",// 成功提现
+				canDrawAmt: "",// 可提现
+				applyAmt: "",// 已申请提现
+				score: ""// 积分
+			}
+		},
 		created(){
 			this.$bus.emit("show_nav", false);
+		},
+		mounted(){
+			this.net_cmd_vip_info();
 		},
 		methods: {
 			on_back: function(){
 				this.$router.go(-1);
+			},
+			net_cmd_vip_info: function() {
+				let self = this;
+				this.$ajax.get(this.$url.vipinfo).then(function(res) {
+					console.error(res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						let data = res.data.body;
+						self.username = data.nickName;
+						self.headImgUrl = data.headImgUrl ? data.headImgUrl : require("../assets/images/defhead.jpg");
+						self.introducer = data.introducer ? data.introducer : "无";
+						self.invateCode = data.invateCode ? data.invateCode : "暂无";
+						self.totalAmt = data.totalAmt ? data.totalAmt : 0;
+						self.cashAmt = data.cashAmt ? data.cashAmt : 0;
+						self.canDrawAmt = data.canDrawAmt ? data.canDrawAmt : 0;
+						console.error("成功");
+					}
+					else {
+
+					}
+				})
 			}
 		}
 	}
@@ -62,7 +98,7 @@
 		width: 100%;
 		padding: 0.3rem;
 		text-align: center;
-		background: rgb(122, 220, 0);
+		background: rgb(100, 216, 239);
 	}
 	.info img{
 		width: 1.2rem;

@@ -19,7 +19,7 @@ Vue.prototype.$base = base;
 
 Vue.prototype.$util = util;
 
-window.CODE = {
+Vue.prototype.CODE = {
 	SUCCESS: 10000
 }
 

@@ -3,8 +3,8 @@
 		<div class="m_top">
 			<img src="../assets/images/bg2.jpg">
 			<div class="m_name">
-				<p class="m_n_l">尊贵的XXX<span>(一级分销商)</span></p>
-				<p class="m_n_r">收益：999999</p>
+				<p class="m_n_l">尊贵的{{username}}<span>({{cstLevelCd}})</span></p>
+				<p class="m_n_r">收益：{{totalAmt}}</p>
 			</div>
 		</div>
 		<div class="m_order">
@@ -37,7 +37,7 @@
 		</router-link>
 		<router-link to="/main_jf" class="m_a_o item">
 			<img src="../assets/images/icon23.png">
-			<p>我的积分：<span class="m_jf">999</span></p>
+			<p>我的积分：<span class="m_jf">{{score}}</span></p>
 			<img class="a_o_i" src="../assets/images/icon16.png">
 		</router-link>
 		<router-link to="/collection" class="m_a_o item">
@@ -55,9 +55,45 @@
 
 <script type="text/javascript">
 	export default {
+		data(){
+			return {
+				username: "",// 用户wx名字
+				totalAmt: "",// 累计佣金
+				score: "",// 积分
+				cstLevelCd: ""//身份
+			}
+		},
 		created(){
 			console.error(1);
 			this.$bus.emit("show_nav", true);
+		},
+		mounted(){
+			this.net_cmd_vip_info();
+		},
+		methods: {
+			net_cmd_vip_info: function() {
+				let self = this;
+				this.$ajax.get(this.$url.vipinfo).then(function(res) {
+					console.error(res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						let data = res.data.body;
+						self.username = data.nickName;
+						self.totalAmt = data.totalAmt ? data.totalAmt : 0;
+						self.score = data.score ? data.score : 0;
+						switch(data.cstLevelCd) {
+							case 1: self.cstLevelCd = "代理商";break;
+							case 2: self.cstLevelCd = "经销商";break;
+							case 3: self.cstLevelCd = "工程师";break;
+							case 4: self.cstLevelCd = "会员";break;
+							default: self.cstLevelCd = "会员";break;
+						}
+						console.error("成功");
+					}
+					else {
+
+					}
+				})
+			}
 		}
 	}
 </script>

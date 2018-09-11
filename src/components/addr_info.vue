@@ -162,7 +162,7 @@
 						this.ud_address_info();
 					}
 					else {
-						console.error("没有修改喔");
+						this.$bus.emit("tips", [true, "没有修改喔"]);
 					}
 				}
 				else {
@@ -183,8 +183,11 @@
 					"street": this.street
 				}).then(function(res) {
 					console.error("保存成功了吗", res);
-					if (res.data.code == CODE.SUCCESS) {
+					if (res.data.code == self.CODE.SUCCESS) {
 						self.$bus.emit("tips", [true, "保存成功"]);
+					}
+					else {
+						self.$bus.emit("tips", [true, "保存失败"]);
 					}
 				})
 				if (this.dft_changed)// 有设置默认地址才请求
@@ -194,9 +197,13 @@
 							self.is_dft = true;
 							self.set_dft = false;
 						}
+						else {
+							self.$bus.emit("tips", [true, "保存失败"]);
+						}
 					})
 			},
 			create_address_info: function() {
+				let self = this;
 				this.$ajax.post(this.$url.ctaddr, {
 					"city": this.city,
 					"county": this.county,
@@ -207,6 +214,12 @@
 					"street": this.street
 				}).then(function(res) {
 					console.error("保存成功了吗", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.$bus.emit("tips", [true, "保存成功"]);
+					}
+					else {
+						self.$bus.emit("tips", [true, "保存失败"]);
+					}
 				})
 			}
 		},

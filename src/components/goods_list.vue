@@ -1,4 +1,4 @@
-<template>
+    <template>
 	<div>
 		<div class="head">
 			<span class="h_back" @click="on_back"></span>
@@ -55,7 +55,7 @@
 		mounted(){
 			this.$bus.emit("show_nav", false);
 			this.on_cmd_get_goods_list();
-			this.$util.set_scroll_el(this.$refs.cnt, 10).ser_scroll_event(this, this.on_load_more_goods);
+			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_goods);
 		},
 		methods: {
 			on_back: function(){
