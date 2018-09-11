@@ -22,6 +22,7 @@ Vue.prototype.$util = util;
 Vue.prototype.CODE = {
 	SUCCESS: 10000
 }
+// 
 
 new Vue({
   render: h => h(App),
