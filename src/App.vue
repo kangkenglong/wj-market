@@ -24,7 +24,7 @@ import Nav from './components/nav.vue'
 export default {
   name: 'app',
   components: {
-    // HelloWorld
+    // HelloWorld1
     Nav
   },
   data(){
