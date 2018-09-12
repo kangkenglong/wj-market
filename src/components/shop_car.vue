@@ -56,6 +56,13 @@
 			on_tosel: function(){
 				this.$router.push("/settlement");
 			}
+		},
+		beforeRouteLeave (to, from, next) {
+			// 导航离开该组件的对应路由时调用
+			// 可以访问组件实例 `this`
+			// this.$util.save_scroll_top();
+			this.$bus.emit("show_noinfo", [false, ""]);
+			next();
 		}
 	}
 </script>

@@ -44,8 +44,8 @@
 				cnum_jg: 0,// 0位价格大->小 1位价格小->大
 				img_xl: require("../assets/images/icon28_0.png"),
 				cnum_xl: 0,// 0为销量大->小 1为销量小->大
-				page: 1,
-				pageSize: 0,
+				pageNum: 1,
+				pages: 0,
 				is_net: false,// 是否在请求中 防止滚动到末尾多次请求数据
 				is_tips: false,// 是否显示已无更多的商品提示
 				test_data: [
@@ -64,10 +64,10 @@
 			on_cmd_get_goods_list: function(){
 				let self = this;
 				let goods_arr = self.test_data;
-				self.$ajax.get(self.$url.goodslist + "?pageNum=" + self.page +"&pageSize=8").then(function (res) {
+				self.$ajax.get(self.$url.goodslist + "?pageNum=" + self.pageNum +"&pageSize=8").then(function (res) {
 					console.error("商品列表", res.data);
 					let data = res.data;
-					self.pageSize = data.body.pages;
+					self.pages = data.body.pages;
 					data.body.list.forEach( item => {
 						let goods = new self.$base.goods();
 						goods.goodsId = item["goodsId"];
@@ -78,7 +78,6 @@
 						goods.goodsSale = item["goodsSale"];
 						goods_arr.push(goods);
 					})
-					self.$util.scroll_flag = true;
 					self.is_net = false;
 					self.on_filtare_arr(goods_arr);
 				})
@@ -175,14 +174,13 @@
 			},
 			on_load_more_goods: function() {
 				console.error("处理滚动回调");
-				if (this.page < this.pageSize && !this.is_net) {
+				if (this.pages > this.pageNum && !this.is_net) {
 					this.is_tips = false;
 					this.is_net = true;
 					this.page++;
 					this.on_cmd_get_goods_list();
 				}
 				else {
-					this.$util.scroll_flag = true;
 					this.is_tips = true;
 				}
 			}

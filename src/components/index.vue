@@ -22,12 +22,12 @@
 						<span class="c_g_mor" @click="on_toGoodsList">更多</span>
 					</div>
 					<div class="c_g_god">
-						<div class="goods" v-for="goods in test_data" :key="goods.id">
+						<div class="goods" v-for="goods in goods_arr" :key="goods.id">
 							<router-link to="/goods_info" style="display: block;">
 								<!-- <img src="../assets/images/g0.png"/> -->
-								<img class="g_img" src="../assets/images/g0.png" />
-								<p class="g_nme">{{goods.name}}</p>
-								<p class="g_pri">￥ {{goods.price}}</p>
+								<img class="g_img" :src="goods.imageUrl" />
+								<p class="g_nme">{{goods.goodsName}}</p>
+								<p class="g_pri">￥ {{goods.goodsPrice}}&nbsp;&nbsp;</p>
 							</router-link>
 						</div>
 					</div>
@@ -40,12 +40,12 @@
 						<span class="c_g_mor" @click="on_toYh">更多</span>
 					</div>
 					<div class="c_g_god">
-						<div class="goods" v-for="goods in test_data" :key="goods.id">
+						<div class="goods" v-for="goods in dic_goods_arr" :key="goods.id">
 							<router-link to="/goods_info" style="display: block;">
 								<!-- <img src="../assets/images/g0.png"/> -->
-								<img class="g_img" src="../assets/images/g0.png" />
-								<p class="g_nme">{{goods.name}}</p>
-								<p class="g_pri">￥ {{goods.price}}&nbsp;&nbsp;<del>¥ 99.00</del></p>
+								<img class="g_img" :src="goods.imageUrl" />
+								<p class="g_nme">{{goods.goodsName}}</p>
+								<p class="g_pri">￥ {{goods.goodsPrice * goods.goodsDiscount}}&nbsp;&nbsp;<del>¥ {{goods.goodsPrice}}</del></p>
 							</router-link>
 						</div>
 					</div>
@@ -61,12 +61,8 @@
 	export default {
 		data(){
 			return {
-				test_data: [
-					{"id": 1, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 2, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 3, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-					{"id": 4, "price": 999, "name": "开关", "img": "../assets/images/g0.png"},
-				]
+				goods_arr: [],
+				dic_goods_arr: []
 			}
 		},
 		mounted(){
@@ -93,19 +89,55 @@
 			// 	console.error(res);
 			// })
 		},
+		mounted(){
+			this.on_cmd_get_goods_list();
+			this.on_cmd_get_dic_goods_list();
+		},
 		methods: {
 			on_toYh: function(){
 				this.$router.push("/youhui");
 			},
 			on_cmd_get_goods_list: function(){
-				this.$ajax.get(this.$url.goodslist).then(function (res) {
-					console.log(res.data);
+				let self = this;
+				let goods_arr = self.goods_arr;
+				self.$ajax.get(self.$url.goodslist + "?pageNum=1&pageSize=4").then(function (res) {
+					console.error("商品列表", res.data);
+					let data = res.data;
+					data.body.list.forEach( item => {
+						let goods = new self.$base.goods();
+						goods.goodsId = item["goodsId"];
+						goods.goodsDiscount = item["goodsDiscount"];
+						goods.goodsName = item["goodsName"];
+						goods.goodsPrice = item["goodsPrice"];
+						goods.imageUrl = item["imageUrl"];
+						goods.goodsSale = item["goodsSale"];
+						goods_arr.push(goods);
+					})
+					self.goods_arr = goods_arr;
 				})
-				console.error(this.$url);
+			},
+			on_cmd_get_dic_goods_list: function(){
+				let self = this;
+				let goods_arr = self.dic_goods_arr;
+				self.$ajax.get(self.$url.dicgoodslist + "?pageNum=1&pageSize=4").then(function (res) {
+					console.error("商品列表", res.data);
+					let data = res.data;
+					data.body.list.forEach( item => {
+						let goods = new self.$base.goods();
+						goods.goodsId = item["goodsId"];
+						goods.goodsDiscount = item["goodsDiscount"];
+						goods.goodsName = item["goodsName"];
+						goods.goodsPrice = item["goodsPrice"];
+						goods.imageUrl = item["imageUrl"];
+						goods.goodsSale = item["goodsSale"];
+						goods_arr.push(goods);
+					})
+					self.dic_goods_arr = goods_arr;
+				})
 			},
 			on_toGoodsList: function(){
 				this.$router.push("/goodslist");
-			},
+			}
 		},
 		beforeRouteLeave (to, from, next) {
 			// 导航离开该组件的对应路由时调用

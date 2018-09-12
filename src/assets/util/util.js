@@ -29,14 +29,15 @@ let Util={
 		console.error(oDiv.scrollTop, oDiv.offsetHeight, oDiv.scrollHeight);
 		let topHeight = oDiv.scrollTop;
 		if (topHeight + oDiv.offsetHeight + self.scroll_dis >= oDiv.scrollHeight && self.scroll_flag) {
-			self.scroll_flag = false;
 			Util.scroll_callback.call(self.self);
 		}
 	},
 	save_scroll_top: function() {
+		// 记录当前滚动位置
 		this.scroll_top = this.scroll_el.scrollTop;
 	},
 	scroll_to: function(num) {
+		console.error("滚动位置", num);
 		this.scroll_el.scrollTop = num;
 	}
 }

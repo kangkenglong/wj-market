@@ -41,7 +41,7 @@
 				this.$ajax.get(this.$url.myteam + "&pageSize=8&pageNum=" + self.pageNum).then(function(res) {
 					console.error(res);
 					if (res.data.code == self.CODE.SUCCESS) {
-						let arr = [];
+						let arr = self.team_arr;
 						res.data.body.list.forEach(item => {
 							arr.push(item);
 						})
@@ -62,7 +62,6 @@
 					this.net_cmd_team_info();
 				}
 				else {
-					this.$util.scroll_flag = true;
 					this.is_tips = true;
 				}
 			}

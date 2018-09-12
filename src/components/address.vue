@@ -5,7 +5,7 @@
 			<p>地址管理</p>
 		</div>
 		<div class="cnt" ref="cnt">
-			<div class="c_a" v-for="addr in addr_list" :key="addr.addressId">
+			<div class="c_a" v-for="(addr, i) in addr_list" :key="addr.id">
 				<div class="a_b" @click="on_to_addrinfo(addr)">
 					<img src="../assets/images/icon27.png">
 				</div>
@@ -14,7 +14,7 @@
 					<p class="i_i">{{addr.province}}{{addr.city}}{{addr.county}}{{addr.street}}</p>
 				</div>
 				<div class="a_d">
-					<p>删除</p>
+					<p @click="on_del_addr(addr.id, i)">删除</p>
 				</div>
 			</div>
 			<p class="m_tips" v-show="is_tips">没有更多的信息</p>
@@ -81,6 +81,8 @@
 					else {
 						this.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
 					}
+				}).then(function() {
+					self.$util.scroll_to(self.$util.scroll_top);
 				})
 			},
 			on_load_more_addr: function() {
@@ -92,9 +94,24 @@
 					this.net_cmd_addr_list();
 				}
 				else {
-					this.$util.scroll_flag = true;
 					this.is_tips = true;
 				}
+			},
+			on_del_addr: function(id, index) {
+				if (id == undefined) return;
+				let self = this;
+				this.$ajax.get(this.$url.deladdr + "?id=" + id).then(function (res) {
+					console.error(res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.$bus.emit("tips", [true, "删除成功"]);
+						self.$util.save_scroll_top();
+						self.addr_list = [];
+						self.net_cmd_addr_list();
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
+					}
+				})
 			}
 		}
 	}
