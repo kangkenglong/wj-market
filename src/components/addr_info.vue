@@ -113,8 +113,13 @@
 				this.postCode = data.area.code;
 			},
 			on_sure: function(){
-				this.addr_area = this.province + " " + this.city + " " + this.county;
-				this.show_flag = false;
+				if (this.postCode == "") {
+					this.$bus.emit("tips", [true, "请选择地区"]);
+				}
+				else {
+					this.addr_area = this.province + " " + this.city + " " + this.county;
+					this.show_flag = false;
+				}
 			},
 			on_open_addr: function(){
 				this.show_flag = true;
@@ -204,23 +209,42 @@
 			},
 			create_address_info: function() {
 				let self = this;
-				this.$ajax.post(this.$url.ctaddr, {
-					"city": this.city,
-					"county": this.county,
-					"phone": this.phone,
-					"postCode": this.postCode,
-					"province": this.province,
-					"receiver": this.receiver,
-					"street": this.street
-				}).then(function(res) {
-					console.error("保存成功了吗", res);
-					if (res.data.code == self.CODE.SUCCESS) {
-						self.$bus.emit("tips", [true, "保存成功"]);
-					}
-					else {
-						self.$bus.emit("tips", [true, "保存失败"]);
-					}
-				})
+				if (this.receiver == "") {
+					this.$bus.emit("tips", [true, "请填写联系人姓名"]);
+					return;
+				}
+				if (this.phone == "") {
+					this.$bus.emit("tips", [true, "请填写联系电话"]);
+					return;
+				}
+				if (this.city == "" || this.county == "" || this.postCode == "" || this.province == "") {
+					this.$bus.emit("tips", [true, "请选择地区"]);
+					return;
+				}
+				if (this.street == "") {
+					this.$bus.emit("tips", [true, "请填写详细地址"]);
+					return;
+				}
+				else {
+					this.$ajax.post(this.$url.ctaddr, {
+						"city": this.city,
+						"county": this.county,
+						"phone": this.phone,
+						"postCode": this.postCode,
+						"province": this.province,
+						"receiver": this.receiver,
+						"street": this.street,
+						"cstId": "KHBH1809090013"
+					}).then(function(res) {
+						console.error("保存成功了吗", res);
+						if (res.data.code == self.CODE.SUCCESS) {
+							self.$bus.emit("tips", [true, "保存成功"]);
+						}
+						else {
+							self.$bus.emit("tips", [true, "保存失败"]);
+						}
+					})
+				}
 			}
 		},
 		components: { VDistpicker },

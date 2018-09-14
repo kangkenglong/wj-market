@@ -6,6 +6,8 @@ let Util={
 	scroll_flag: true,// 是否开启滚动执行回调
 	scroll_top: 0,
 	scroll_dis: 0,// 触发距离
+	pageNum: -1,
+	pageSize: -1,
 	set_scroll_el: function(el, dis, call, callback) {
 		if (!el) return;
 		if(dis == undefined) return;
@@ -36,9 +38,23 @@ let Util={
 		// 记录当前滚动位置
 		this.scroll_top = this.scroll_el.scrollTop;
 	},
+	reset_scroll_top: function() {
+		this.scroll_top = 0;
+	},
 	scroll_to: function(num) {
 		console.error("滚动位置", num);
 		this.scroll_el.scrollTop = num;
+	},
+	get_scrollTop: function() {
+		console.error(this.scroll_el.scrollTop, this.scroll_el.offsetHeight);
+		return this.scroll_el.scrollTop;
+	},
+	set_page: function(pageNum, pageSize) {
+		this.pageNum = pageNum;
+		this.pageSize = pageSize;
+	},
+	get_page: function() {
+		return [this.pageNum, this.pageSize];
 	}
 }
 export default Util
