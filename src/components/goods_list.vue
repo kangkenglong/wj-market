@@ -21,7 +21,7 @@
 			<div class="m_c_g">
 				<div class="c_g_god">
 					<div class="goods" v-for="goods in test_data" :key="goods.id">
-						<router-link to="/goods_info" style="display: block;">
+						<router-link :to="{path: 'goods_info', query: {'goodsid': goods.goodsId}}" style="display: block;">
 							<!-- <img src="../assets/images/g0.png"/> -->
 							<img class="g_img" :src="goods.imageUrl" />
 							<p class="g_nme">{{goods.goodsName}}</p>
@@ -67,19 +67,24 @@
 				self.$ajax.get(self.$url.goodslist + "?pageNum=" + self.pageNum +"&pageSize=8").then(function (res) {
 					console.error("商品列表", res.data);
 					let data = res.data;
-					self.pages = data.body.pages;
-					data.body.list.forEach( item => {
-						let goods = new self.$base.goods();
-						goods.goodsId = item["goodsId"];
-						goods.goodsDiscount = item["goodsDiscount"];
-						goods.goodsName = item["goodsName"];
-						goods.goodsPrice = item["goodsPrice"];
-						goods.imageUrl = item["imageUrl"];
-						goods.goodsSale = item["goodsSale"];
-						goods_arr.push(goods);
-					})
-					self.is_net = false;
-					self.on_filtare_arr(goods_arr);
+					if (data.code == self.CODE.SUCCESS) {
+						self.pages = data.body.pages;
+						data.body.list.forEach( item => {
+							let goods = new self.$base.goods();
+							goods.goodsId = item["goodsId"];
+							goods.goodsDiscount = item["goodsDiscount"];
+							goods.goodsName = item["goodsName"];
+							goods.goodsPrice = item["goodsPrice"];
+							goods.imageUrl = item["imageUrl"];
+							goods.goodsSale = item["goodsSale"];
+							goods_arr.push(goods);
+						})
+						self.is_net = false;
+						self.on_filtare_arr(goods_arr);
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
+					}
 				})
 			},
 			on_cut_filtare: function(type){

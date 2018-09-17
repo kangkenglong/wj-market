@@ -23,7 +23,7 @@
 					</div>
 					<div class="c_g_god">
 						<div class="goods" v-for="goods in goods_arr" :key="goods.id">
-							<router-link to="/goods_info" style="display: block;">
+							<router-link :to="{path: '/goods_info', query: {'goodsid': goods.goodsId}}" style="display: block;">
 								<!-- <img src="../assets/images/g0.png"/> -->
 								<img class="g_img" :src="goods.imageUrl" />
 								<p class="g_nme">{{goods.goodsName}}</p>
@@ -41,7 +41,7 @@
 					</div>
 					<div class="c_g_god">
 						<div class="goods" v-for="goods in dic_goods_arr" :key="goods.id">
-							<router-link to="/goods_info" style="display: block;">
+							<router-link :to="{path: '/goods_info', query: {'goodsid': goods.goodsId}}" style="display: block;">
 								<!-- <img src="../assets/images/g0.png"/> -->
 								<img class="g_img" :src="goods.imageUrl" />
 								<p class="g_nme">{{goods.goodsName}}</p>
@@ -65,6 +65,15 @@
 				dic_goods_arr: []
 			}
 		},
+		created(){
+			// console.error(1);
+			this.$bus.emit("show_nav", true);
+			// this.$bus.emit("show_nav", true);
+			// this.on_cmd_get_goods_list();
+			// this.$ajax.get("/api/pagingLjContactUsList", function(req, res){
+			// 	console.error(res);
+			// })
+		},
 		mounted(){
 			new Swiper('.swiper-container', {
 				// autoplay:1000,//可选选项，自动滑动loop: true,
@@ -79,17 +88,6 @@
 					el: '.swiper-pagination',
 				 }
 			})
-		},
-		created(){
-			// console.error(1);
-			this.$bus.emit("show_nav", true);
-			// this.$bus.emit("show_nav", true);
-			// this.on_cmd_get_goods_list();
-			// this.$ajax.get("/api/pagingLjContactUsList", function(req, res){
-			// 	console.error(res);
-			// })
-		},
-		mounted(){
 			this.on_cmd_get_goods_list();
 			this.on_cmd_get_dic_goods_list();
 		},

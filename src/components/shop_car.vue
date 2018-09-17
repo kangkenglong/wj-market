@@ -38,13 +38,13 @@
 		data(){
 			return {
 				test_data: [
-					// {'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
-					// {'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
-					// {'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
-					// {'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
-					// {'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
-					// {'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
-					// {'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
+					{'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
+					{'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
+					{'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
+					{'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
+					{'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
+					{'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
+					{'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
 				]
 			}
 		},

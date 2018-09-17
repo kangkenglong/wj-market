@@ -4,18 +4,18 @@
 			<span class="h_back" @click="on_back"></span>
 			<p>我的收藏</p>
 		</div>
-		<div class="main">
-			<div class="m_goods" v-for="goods in test_data" :key="goods.id">
-				<router-link to="/goods_info">
-					<img src="../assets/images/g0.png">
+		<div class="main" ref="cnt">
+			<div class="m_goods" v-for="(goods, i) in clt_list" :key="i">
+				<a @click="on_to_goodsinfo(goods.goodsId)">
+					<img :src="goods.imageUrl">
 					<div class="m_g_d">
-						<p class="g_d_n">{{goods.name}}</p>
-						<p class="g_d_t">规格： {{goods.desc}}</p>
-						<p class="g_d_p">￥{{goods.price}}</p>
+						<p class="g_d_n">{{goods.goodsName}}</p>
+						<p class="g_d_p">￥{{goods.goodsPrice}}</p>
 					</div>
-				</router-link>
-				<span class="g_dell"></span>
+				</a>
+				<span class="g_dell" @click="on_del_clt(goods.id, i)"></span>
 			</div>
+			<p class="m_tips" v-show="b_tips">没有更多的信息</p>
 		</div>
 	</div>
 </template>
@@ -25,24 +25,127 @@
 		name: "shop_car",
 		data(){
 			return {
-				test_data: [
-					{'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
-					{'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
-					{'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
-					{'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
-					{'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
-					{'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
-					{'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
-				]
+				clt_list: [
+				],
+				b_net: false,// 是否在请求中
+				b_tips: false,// 是否提示没有更多商品
+				b_load_move: true,// 是否开启加载更多
+				pageNum: 1,
+				pageSize: 12,
+				pages: 0
 			}
 		},
 		methods: {
 			on_back: function(){
+				this.pageNum = -1;
+				this.pageSize = -1;
 				this.$router.go(-1);
+			},
+			net_cmd_clt_list: function(pageNum, pageSize){
+				let self = this;
+				console.error(pageSize);
+				self.$ajax.get(self.$url.cltlist + "&pageNum=" + pageNum + "&pageSize=" + pageSize).then(function (res) {
+					console.error("收藏列表", res.data);
+					let data = res.data;
+					if (data.code == self.CODE.SUCCESS) {
+						let arr = self.clt_list;
+						let length = data.body.list.length;
+						if (length > 0) {
+							self.$bus.emit("show_noinfo", [false, ""]);
+							data.body.list.forEach(item => {
+								let clt = new self.$base.collect();
+								clt.goodsId = item.goodsId;
+								clt.goodsPrice = item.goodsPrice ? item.goodsPrice : 0;
+								clt.imageUrl = item.imageUrl;
+								clt.goodsName = item.goodsName;
+								clt.goodsDiscount = item.goodsDiscount ? item.goodsDiscount : 1;
+								clt.id = item.id;
+								clt.collectId = item.collectId;
+								arr.push(clt);
+							})
+							self.clt_list = arr;
+							self.b_net = false;
+						}
+						else {
+							self.$bus.emit("show_noinfo", [true, "快把喜欢的宝贝添加进来吧"]);
+						}
+						self.pages = res.data.body.pages;
+						self.b_tips = false;
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
+					}
+				}).then(function() {
+					self.$util.scroll_to(self.$util.scroll_top);
+					self.b_load_move = true;// 开启加载更多
+				})
+			},
+			on_load_more_clt: function() {
+				console.error("处理滚动回调");
+				if (this.b_load_move) {
+					if (this.pages > this.pageNum && !this.b_net) {
+						this.b_tips = false;
+						this.b_net = true;
+						this.pageNum++;
+						this.pageSize = 12;
+						this.net_cmd_clt_list(this.pageNum, this.pageSize);
+					}
+					else {
+						this.b_tips = true;
+					}
+				}
+			},
+			on_del_clt: function(id, index) {
+				if (id == undefined) return;
+				let self = this;
+				this.$ajax.get(this.$url.delclt + id).then(function (res) {
+					console.error(res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.$bus.emit("tips", [true, "删除成功"]);
+						self.clt_list.splice(index, 1);
+						self.$util.save_scroll_top();
+						 self.b_load_move = false;// 防止后面clt_list至为[]时 触发加载更多
+						self.clt_list = [];
+						// self.pageSize = 12 * self.pageNum;
+						self.net_cmd_clt_list(1, 12 * self.pageNum);
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
+					}
+				})
+			},
+			on_to_goodsinfo: function(id){
+				console.error(id);
+				this.$router.push({path: "/goods_info", query: {"goodsid": id}});
 			}
 		},
 		created(){
 			this.$bus.emit("show_nav", false);
+		},
+		mounted(){
+			// ---------回到原来浏览的位置 begin----------
+			let pageNum = this.$util.get_page()[0];
+			let pageSize = this.$util.get_page()[1];
+			if (pageNum == -1 && pageSize == -1) {
+				this.$util.reset_scroll_top();
+				console.error("1", this.$util.get_page());
+				this.net_cmd_clt_list(this.pageNum, 12);
+			}
+			else {
+				console.error("2", this.$util.get_page());
+				this.pageNum = pageNum;
+				this.net_cmd_clt_list(1, pageSize * pageNum);
+			}
+			// -------end-------
+			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_clt);
+		},
+		beforeRouteLeave (to, from, next) {
+			// 导航离开该组件的对应路由时调用
+			// 可以访问组件实例 `this`
+			this.$util.save_scroll_top();
+			this.$util.set_page(this.pageNum, this.pageSize);
+			this.$bus.emit("show_noinfo", [false, ""]);
+			next();
 		}
 	}
 </script>
@@ -108,5 +211,12 @@
 		height: 100%;
 		background: url('../assets/images/icon18.png') no-repeat center center;
 		background-size: 100% 0.45rem;
+	}
+	.m_tips{
+		width: 100%;
+		height: 0.6rem;
+		text-align: center;
+		line-height: 0.6rem;
+		color: #999999;
 	}
 </style>

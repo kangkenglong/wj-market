@@ -42,6 +42,7 @@
 			this.$bus.emit("show_nav", false);
 		},
 		mounted(){
+			// ---------回到原来浏览的位置 begin----------
 			let pageNum = this.$util.get_page()[0];
 			let pageSize = this.$util.get_page()[1];
 			if (pageNum == -1 && pageSize == -1) {
@@ -54,6 +55,7 @@
 				this.pageNum = pageNum;
 				this.net_cmd_addr_list(1, pageSize * pageNum);
 			}
+			// -------end-------
 			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_addr);
 		},
 		methods: {
@@ -67,7 +69,7 @@
 			},
 			on_to_addrinfo: function(data){
 				console.error(data);
-				this.$bus.emit("save_data", data);
+				// this.$bus.emit("save_data", data);
 				this.$router.push({path: "/addrinfo", query: data});
 			},
 			net_cmd_addr_list: function(pageNum, pageSize){
