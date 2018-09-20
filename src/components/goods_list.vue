@@ -30,7 +30,7 @@
 					</div>
 				</div>
 			</div>
-			<p class="m_tips" v-show="is_tips">没有更多的商品</p>
+			<p class="m_tips" v-show="b_tips">没有更多的商品</p>
 		</div>
 	</div>
 </template>
@@ -45,46 +45,75 @@
 				img_xl: require("../assets/images/icon28_0.png"),
 				cnum_xl: 0,// 0为销量大->小 1为销量小->大
 				pageNum: 1,
+				pageSize: 8,
 				pages: 0,
-				is_net: false,// 是否在请求中 防止滚动到末尾多次请求数据
-				is_tips: false,// 是否显示已无更多的商品提示
+				b_net: false,// 是否在请求中 防止滚动到末尾多次请求数据
+				b_tips: false,// 是否显示已无更多的商品提示
+				b_load_move: true,// 是否开启加载更多
 				test_data: [
 				]
 			}
 		},
 		mounted(){
+			// ---------回到原来浏览的位置 begin----------
+			let pageNum = this.$util.get_page()[0];
+			let pageSize = this.$util.get_page()[1];
+			if (pageNum == -1 && pageSize == -1) {
+				this.$util.reset_scroll_top();
+				console.error("1", this.$util.get_page());
+				this.on_cmd_get_goods_list(this.pageNum, 8);
+			}
+			else {
+				console.error("2", this.$util.get_page());
+				this.pageNum = pageNum;
+				this.on_cmd_get_goods_list(1, pageSize * pageNum);
+			}
+			// -------end-------
 			this.$bus.emit("show_nav", false);
-			this.on_cmd_get_goods_list();
 			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_goods);
 		},
 		methods: {
 			on_back: function(){
+				this.pageNum = -1;
+				this.pageSize = -1;
 				this.$router.go(-1);
 			},
-			on_cmd_get_goods_list: function(){
+			on_cmd_get_goods_list: function(pageNum, pageSize){
+				console.error("请求", pageNum, pageSize);
 				let self = this;
-				let goods_arr = self.test_data;
-				self.$ajax.get(self.$url.goodslist + "?pageNum=" + self.pageNum +"&pageSize=8").then(function (res) {
+				self.$ajax.get(self.$url.goodslist + "?pageNum=" + pageNum +"&pageSize=" + pageSize).then(function (res) {
 					console.error("商品列表", res.data);
 					let data = res.data;
+					let length = res.data.body.list.length;
 					if (data.code == self.CODE.SUCCESS) {
-						self.pages = data.body.pages;
-						data.body.list.forEach( item => {
-							let goods = new self.$base.goods();
-							goods.goodsId = item["goodsId"];
-							goods.goodsDiscount = item["goodsDiscount"];
-							goods.goodsName = item["goodsName"];
-							goods.goodsPrice = item["goodsPrice"];
-							goods.imageUrl = item["imageUrl"];
-							goods.goodsSale = item["goodsSale"];
-							goods_arr.push(goods);
-						})
-						self.is_net = false;
-						self.on_filtare_arr(goods_arr);
+						let goods_arr = self.test_data;
+						if (length > 0) {
+							self.$bus.emit("show_noinfo", [false, "暂无商品"]);
+							data.body.list.forEach( item => {
+								let goods = new self.$base.goods();
+								goods.goodsId = item["goodsId"];
+								goods.goodsDiscount = item["goodsDiscount"];
+								goods.goodsName = item["goodsName"];
+								goods.goodsPrice = item["goodsPrice"];
+								goods.imageUrl = item["imageUrl"];
+								goods.goodsSale = item["goodsSale"];
+								goods_arr.push(goods);
+							})
+							self.b_net = false;
+							self.on_filtare_arr(goods_arr);
+						}
+						else {
+							self.$bus.emit("show_noinfo", [true, "暂无商品"]);
+						}
+						self.pages = res.data.body.pages;
+						self.b_tips = false;
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
 					}
+				}).then(function() {
+					self.$util.scroll_to(self.$util.get_scroll_top());
+					self.b_load_move = true;// 开启加载更多
 				})
 			},
 			on_cut_filtare: function(type){
@@ -99,7 +128,7 @@
 						this.cnum_xl = 0;
 
 						this.on_reset_net_data();
-						this.on_cmd_get_goods_list();
+						this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
 						break;
 					case "jg":
 						this.img_xl = require("../assets/images/icon28_0.png");
@@ -114,7 +143,7 @@
 						}
 
 						this.on_reset_net_data();
-						this.on_cmd_get_goods_list();
+						this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
 						break;
 					case "xl":
 						this.img_jg = require("../assets/images/icon28_0.png");
@@ -129,7 +158,7 @@
 						}
 
 						this.on_reset_net_data();
-						this.on_cmd_get_goods_list();
+						this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
 						break;
 				}
 			},
@@ -172,23 +201,40 @@
 				return a - b;
 			},
 			on_reset_net_data: function() {
-				this.page = 1;
-				this.is_tips = false;
+				this.pageNum = 1;
+				this.pageSize = 8;
+				this.b_tips = false;
 				this.test_data = [];
-				this.$util.scroll_to(0);
+				this.$util.reset_scroll_top();
 			},
 			on_load_more_goods: function() {
 				console.error("处理滚动回调");
-				if (this.pages > this.pageNum && !this.is_net) {
-					this.is_tips = false;
-					this.is_net = true;
-					this.page++;
-					this.on_cmd_get_goods_list();
-				}
-				else {
-					this.is_tips = true;
+				if (this.b_load_move) {
+					if (this.pages > this.pageNum && !this.b_net) {
+						this.b_tips = false;
+						this.b_net = true;
+						this.pageNum++;
+						this.pageSize = 8;
+						this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
+					}
+					else {
+						this.b_tips = true;
+					}
 				}
 			}
+		},
+		beforeRouteLeave (to, from, next) {
+			// 导航离开该组件的对应路由时调用
+			// 可以访问组件实例 `this`
+			if (this.pageNum == -1 && this.pageSize == -1) {
+				this.$util.reset_scroll_top();
+			}
+			else {
+				this.$util.save_scroll_top();
+			}
+			this.$util.set_page(this.pageNum, this.pageSize);
+			this.$bus.emit("show_noinfo", [false, ""]);
+			next();
 		}
 	}
 </script>

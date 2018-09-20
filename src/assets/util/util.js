@@ -36,10 +36,16 @@ let Util={
 	},
 	save_scroll_top: function() {
 		// 记录当前滚动位置
-		this.scroll_top = this.scroll_el.scrollTop;
+		// this.scroll_top = this.scroll_el.scrollTop;
+		this.set_sessionStorage("srltop", this.scroll_el.scrollTop.toString());
+	},
+	get_scroll_top: function() {
+		let str = this.get_sessionStorage_by_key("srltop");
+		return parseInt(str);
 	},
 	reset_scroll_top: function() {
-		this.scroll_top = 0;
+		this.set_sessionStorage("srltop", "0");
+		// this.scroll_top = 0;
 	},
 	scroll_to: function(num) {
 		console.error("滚动位置", num);
@@ -50,11 +56,32 @@ let Util={
 		return this.scroll_el.scrollTop;
 	},
 	set_page: function(pageNum, pageSize) {
-		this.pageNum = pageNum;
-		this.pageSize = pageSize;
+		// this.pageNum = pageNum;
+		// this.pageSize = pageSize;
+		let obj = {"pageNum": pageNum, "pageSize": pageSize};
+		this.set_sessionStorage("page", JSON.stringify(obj));
 	},
 	get_page: function() {
-		return [this.pageNum, this.pageSize];
+		let str = this.get_sessionStorage_by_key("page");
+		if (!str) return [-1, -1];
+		console.error(str);
+		let obj = JSON.parse(str);
+		return [obj.pageNum, obj.pageSize];
+	},
+	set_sessionStorage: function(key, val) {
+		window.sessionStorage.setItem(key,val);
+	},
+	get_sessionStorage_by_key: function(key) {
+		return window.sessionStorage.getItem(key);
+	},
+	del_sessionStorage_by_key: function(key) {
+		window.sessionStorage.removeItem(key);
+	},
+	get_query_string: function(name) {
+		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if(r!=null)return unescape(r[2]);
+		return null;
 	}
 }
 export default Util
