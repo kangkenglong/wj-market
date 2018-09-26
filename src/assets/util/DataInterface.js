@@ -1,7 +1,7 @@
 
 // let globalURL="http://132.232.58.25/shop-app-pc/"
-// let globalURL="/api"
-let globalURL="http://www.kwp8.top/shop-app-pc"
+let globalURL="/api"
+// let globalURL="http://www.kwp8.top/shop-app-pc"
 let url={
 	goodslist: globalURL + "/public/goods/findGoodsList/v1.0",
 	goodsinfo: globalURL + "/public/goods/getGoods/v1.0?goodsId=",
@@ -19,7 +19,8 @@ let url={
 	getcode: globalURL + "/public/login/getCode/v1.0",
 	getacctkn: globalURL + "/public/login/getAccessToken/v1.0",
 	getopenid: globalURL + "/public/login/getOpenId/v1.0",
-	getuserinfo: globalURL + "/public/login/getUserInfo/v1.0"
+	getuserinfo: globalURL + "/public/login/getUserInfo/v1.0",
+	// getAccessToken: globalURL + "/public/login/getAccessToken/v1.0"
 }
 
 export default url

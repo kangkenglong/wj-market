@@ -21,6 +21,7 @@ import Settlement from '@/components/settlement'
 import Address from '@/components/address'
 import Addr_info from '@/components/addr_info'
 import Goods_list from '@/components/goods_list'
+import Login from '@/components/login'
 // import Search from '@/components/search'
 
 Vue.use(Router)
@@ -131,6 +132,11 @@ export default new Router({
       path: '/goodslist',
       name: 'Goods_list',
       component: Goods_list
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     },
     // {
     //   path: '/search',

@@ -54,7 +54,6 @@
 </template>
 
 <script type="text/javascript">
-	import $ from "jquery"
 	export default {
 		data(){
 			return {
@@ -70,27 +69,34 @@
 			this.$bus.emit("show_nav", true);
 		},
 		mounted(){
-			console.error("$", $);
+			this.$util.set_login_back_url(window.location.href);
+			this.$util.on_login();
 			// this.net_cmd_vip_info();
-			console.error(typeof this.$util.get_query_string("code"));
-			this.code = this.$util.get_query_string("code");
-			if (!this.code) {
-				// 请求微信静默接口
-				this.net_cmd_get_code();
-			}
-			else {
-				let state = this.$util.get_query_string("state");
-				if (state == "base") {
-					// 静默
-					console.error("静默");
-					this.net_cmd_get_openid();
-				}
-				else if (state == "userinfo") {
-					// 非静默
-					console.error("非静默");
-					this.net_cmd_get_userinfo();
-				}
-			}
+			// let cstid = this.$util.get_userInfo_id();
+			// if (cstid == -1) {
+			// 	this.$util.set_path(window.location.href);
+			// 	this.$router.push("/login");
+			// }
+			// console.error(typeof this.$util.get_query_string("code"));
+			// this.code = this.$util.get_query_string("code");
+			// if (!this.code) {
+			// 	// 请求微信静默接口
+			// 	// this.net_cmd_get_code();
+			// 	console.error("静默请求");
+			// }
+			// else {
+			// 	let state = this.$util.get_query_string("state");
+			// 	if (state == "base") {
+			// 		// 静默
+			// 		console.error("静默");
+			// 		// this.net_cmd_get_openid();
+			// 	}
+			// 	else if (state == "userinfo") {
+			// 		// 非静默
+			// 		console.error("非静默");
+			// 		// this.net_cmd_get_userinfo();
+			// 	}
+			// }
 		},
 		methods: {
 			net_cmd_get_code: function() {

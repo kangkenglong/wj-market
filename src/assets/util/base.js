@@ -27,6 +27,19 @@ let base = {
 		this.goodsDiscount = 1;
 		this.id = 0;
 		this.collectId = 0;
+	},
+	userInfo: function() {
+		this.cstid = 0;// 用户id
+		this.usernam = "";// 用户wx名字
+		this.headImgUr = "";// 头像
+		this.introduce = "";// 推荐人
+		this.invateCod = "";// 邀请码
+		this.totalAm = "";// 累计佣金
+		this.cashAm = "";// 成功提现
+		this.canDrawAm = "";// 可提现
+		this.applyAm = "";// 已申请提现
+		this.scor = "";// 积分
+		this.cstLevelCd = "";// 身份
 	}
 }
 
