@@ -30,16 +30,27 @@ let base = {
 	},
 	userInfo: function() {
 		this.cstid = 0;// 用户id
-		this.usernam = "";// 用户wx名字
-		this.headImgUr = "";// 头像
-		this.introduce = "";// 推荐人
-		this.invateCod = "";// 邀请码
-		this.totalAm = "";// 累计佣金
-		this.cashAm = "";// 成功提现
-		this.canDrawAm = "";// 可提现
-		this.applyAm = "";// 已申请提现
-		this.scor = "";// 积分
+		this.username = "";// 用户wx名字
+		this.headImgUrl = "";// 头像
+		this.introducer = "";// 推荐人
+		this.invateCode = "";// 邀请码
+		this.totalAmt = "";// 累计佣金
+		this.cashAmt = "";// 成功提现
+		this.canDrawAmt = "";// 可提现
+		this.applyAmt = "";// 已申请提现
+		this.score = "";// 积分
 		this.cstLevelCd = "";// 身份
+	},
+	goodsCar: function() {
+		this.id = 0;// 主键
+		this.cartId = "";// 购物车编号
+		this.goodsID = "";// 商品id
+		this.goodsTitle = "";// 商品标题
+		this.goodsName = "";// 商品名字
+		this.goodsPrice = 0;// 商品价格
+		this.goodsDiscount = 1;// 折扣
+		this.imageUrl = "";// 图片
+		this.goodsNum = 0;// 商品数量
 	}
 }
 

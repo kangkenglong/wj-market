@@ -70,115 +70,21 @@
 		},
 		mounted(){
 			this.$util.set_login_back_url(window.location.href);
-			this.$util.on_login();
-			// this.net_cmd_vip_info();
-			// let cstid = this.$util.get_userInfo_id();
-			// if (cstid == -1) {
-			// 	this.$util.set_path(window.location.href);
-			// 	this.$router.push("/login");
-			// }
-			// console.error(typeof this.$util.get_query_string("code"));
-			// this.code = this.$util.get_query_string("code");
-			// if (!this.code) {
-			// 	// 请求微信静默接口
-			// 	// this.net_cmd_get_code();
-			// 	console.error("静默请求");
-			// }
-			// else {
-			// 	let state = this.$util.get_query_string("state");
-			// 	if (state == "base") {
-			// 		// 静默
-			// 		console.error("静默");
-			// 		// this.net_cmd_get_openid();
-			// 	}
-			// 	else if (state == "userinfo") {
-			// 		// 非静默
-			// 		console.error("非静默");
-			// 		// this.net_cmd_get_userinfo();
-			// 	}
-			// }
+			if (this.$util.b_login()) {
+				// 用户已经登录
+				this.update_userInfo();
+			}
+			else {
+				this.$util.on_login();
+			}
 		},
 		methods: {
-			net_cmd_get_code: function() {
-				window.location.href = this.$url.getcode + "?redirect_uri=http://www.kwp8.top/%23/main";
-			},
-			net_cmd_get_openid: function() {
-				let self = this;
-				console.error("111");
-				console.error("静默", this.code);
-				this.$ajax.get(this.$url.getopenid + "?code=" + this.code + "&redirect_uri=http://www.kwp8.top/%23/main").then(function(res) {
-					console.error(res);
-					self.$bus.emit("tips", [true, res.data.code]);
-					if (res.data.code == self.CODE.SUCCESS) {
-						let data = res.data.body;
-						if (data.cstId) {
-							self.username = data.nickName;
-							self.totalAmt = data.totalAmt ? data.totalAmt : 0;
-							self.score = data.score ? data.score : 0;
-							switch(data.cstLevelCd) {
-								case 1: self.cstLevelCd = "代理商";break;
-								case 2: self.cstLevelCd = "经销商";break;
-								case 3: self.cstLevelCd = "工程师";break;
-								case 4: self.cstLevelCd = "会员";break;
-								default: self.cstLevelCd = "会员";break;
-							}
-						}
-						else {
-							window.location.href = self.$url.getacctkn + "?redirect_uri=http://www.kwp8.top/%23/main";
-						}
-					}
-					else {
-						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
-					}
-				})
-			},
-			net_cmd_get_userinfo: function() {
-				let self = this;
-				console.error("非静默", this.code);
-				this.$ajax.get(this.$url.getuserinfo + "?code=" + this.code).then(function(res) {
-					console.error(res);
-					self.$bus.emit("tips", [true, res.data.code]);
-					if (res.data.code == self.CODE.SUCCESS) {
-						let data = res.data.body;
-						self.username = data.nickName;
-						self.totalAmt = data.totalAmt ? data.totalAmt : 0;
-						self.score = data.score ? data.score : 0;
-						switch(data.cstLevelCd) {
-							case 1: self.cstLevelCd = "代理商";break;
-							case 2: self.cstLevelCd = "经销商";break;
-							case 3: self.cstLevelCd = "工程师";break;
-							case 4: self.cstLevelCd = "会员";break;
-							default: self.cstLevelCd = "会员";break;
-						}
-						console.error("成功");
-					}
-					else {
-						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
-					}
-				})
-			},
-			net_cmd_vip_info: function() {
-				let self = this;
-				this.$ajax.get(this.$url.vipinfo).then(function(res) {
-					console.error(res);
-					if (res.data.code == self.CODE.SUCCESS) {
-						let data = res.data.body;
-						self.username = data.nickName;
-						self.totalAmt = data.totalAmt ? data.totalAmt : 0;
-						self.score = data.score ? data.score : 0;
-						switch(data.cstLevelCd) {
-							case 1: self.cstLevelCd = "代理商";break;
-							case 2: self.cstLevelCd = "经销商";break;
-							case 3: self.cstLevelCd = "工程师";break;
-							case 4: self.cstLevelCd = "会员";break;
-							default: self.cstLevelCd = "会员";break;
-						}
-						console.error("成功");
-					}
-					else {
-
-					}
-				})
+			update_userInfo: function() {
+				let userinfo = this.$util.get_userInfo();
+				this.username = userinfo.username;
+				this.totalAmt = userinfo.totalAmt;
+				this.scroe = userinfo.scroe;
+				this.cstLevelCd = userinfo.cstLevelCd;
 			}
 		}
 	}

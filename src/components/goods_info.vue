@@ -46,8 +46,8 @@
 			<div class="g_buy">
 				<div class="g_b_kf" @click="on_kf">客服</div>
 				<div :class="{'g_b_sc': true, 'g_b_set': islove}" @click="on_coll">收藏</div>
-				<div class="g_b_gwc">购物车</div>
-				<div class="g_b_add">
+				<div class="g_b_gwc" @click="on_goto_sc">购物车</div>
+				<div class="g_b_add" @click="on_add_sc">
 					<p>加入购物车</p>
 				</div>
 				<div class="g_b_buy">
@@ -64,6 +64,7 @@
 		name: 'Goods_info',
 		data(){
 			return {
+				b_login: false,
 				goodsId: 0,
 				goodsName: "开关",
 				goodsPrice: 999,
@@ -87,9 +88,45 @@
 			on_kf: function(){
 				this.$bus.emit("tips", [true, "暂无客服人员"]);
 			},
-			on_coll: function(){
-				// this.islove = !this.islove;
-				this.net_cmd_save_collent();
+			on_coll: function() {
+				if (this.$util.b_login()) {
+					if (this.islove) {
+						// 取消收藏
+						this.net_cmd_del_goods_collected();
+					}
+					else {
+						this.net_cmd_save_collent();
+					}
+				}
+				else {
+					// 让用户去登录
+					this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
+					this.$util.on_login();
+				}
+			},
+			on_goto_sc: function() {
+				this.$router.push("/shop_car");
+			},
+			on_add_sc: function() {
+				this.net_cmd_add_car();// 测试
+				// if (this.$util.b_login()) {
+				// 	if (this.goodsId != 0) {
+				// 		this.net_cmd_add_car();
+				// 	}
+				// }
+				// else {
+				// 	// 让用户去登录
+				// 	this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
+				// 	this.$util.on_login();
+				// }
+			},
+			b_collect_goods: function() {
+				// 先判断用户是否登录
+				if (this.$util.b_login()) {
+					this.b_login = true;
+					// 已经登录 请求商品是否收藏
+					this.net_cmd_goods_b_collected();
+				}
 			},
 			net_cmd_goods_info: function(){
 				let self = this;
@@ -125,18 +162,74 @@
 							el: '.swiper-pagination',
 						 }
 					})
+					// 请求是否收藏商品
+					self.b_collect_goods();
 				})
 			},
 			net_cmd_save_collent: function() {
 				let self = this;
 				let goods_arr = self.test_data;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
 				self.$ajax.post(self.$url.savecol, {
-					"cstId": "KHBH1809090013",
+					"cstId": cstId,
 					"goodsId": self.goodsId
 				}).then(function (res) {
 					console.error("收藏", res.data);
 					if (res.data.code == self.CODE.SUCCESS) {
 						self.islove = true;
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
+					}
+				})
+			},
+			net_cmd_del_goods_collected: function() {
+				let self = this;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
+				self.$ajax.post(self.$url.delGIClt, {
+					"cstId": cstId,
+					"goodsId": self.goodsId
+				}).then(function(res) {
+					console.error("取消收藏商品", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.islove = false;
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
+					}
+				})
+			},
+			net_cmd_goods_b_collected: function() {
+				let self = this;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
+				self.$ajax.post(self.$url.goodsIsCol, {
+					"cstId": cstId,
+					"goodsId": self.goodsId
+				}).then(function(res) {
+					console.error("是否有收藏商品", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.islove = res.data.body.result;
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
+					}
+				})
+			},
+			net_cmd_add_car: function() {
+				let self = this;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
+				self.$ajax.post(self.$url.addCar, {
+					"cstId": "KHBH1809090013",
+					"goodsId": self.goodsId,
+					"goodsNum": 1
+				}).then(function(res) {
+					console.error("加入购物车商品", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.$bus.emit("tips", [true, "添加成功"]);
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
@@ -151,6 +244,7 @@
 		},
 		mounted(){
 			this.net_cmd_goods_info();
+
 		}
 	}
 </script>

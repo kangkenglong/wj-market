@@ -136,7 +136,10 @@ let Util={
 	// 登录中间页
 	set_login_page: function() {
 		// return this.get_href_path() + "#/login";
-		this.set_sessionStorage("loginUrl", this.get_href_path + "#/login");
+		let path = this.get_href_path();
+
+		this.set_sessionStorage("loginUrl", path + "#/login");
+		return path + "#/login";
 	},
 	get_login_page: function() {
 		let url = this.get_sessionStorage_by_key("loginUrl");
@@ -160,17 +163,18 @@ let Util={
 		let url = this.get_sessionStorage_by_key("backurl");
 		if (!url) return -1;
 		return url;
-	}
+	},
 	/**
 	* 登录
 	* @param path 回调路径
 	*/
-	on_login: function() {
+	b_login: function() {
 		let cstid = this.get_userInfo_id();// 先判断是否有用户数据
-		if (cstid == -1) {
-			// 先静默请求openid
-			this.net_cmt_get_sb_code(this.set_login_page());
-		}
+		return cstid == -1 ? false : true;
+	},
+	on_login: function() {
+		// 先静默请求openid
+		this.net_cmt_get_sb_code(this.set_login_page());
 	},
 	// 微信重定向至login.vue时 处理微信回调code
 	on_login_code: function() {
@@ -221,9 +225,15 @@ let Util={
 					let userinfo = new base.userInfo();
 					userinfo.cstid = data.cstId;
 					userinfo.username = data.nickName;
-					userinfo.totalAmt = data.totalAmt ? data.totalAmt : 0;
-					userinfo.score = data.score ? data.score : 0;
+					userinfo.headImgUrl = data.headImgUrl || "../images/defhead.jpg";
+					userinfo.totalAmt = data.totalAmt || 0;
+					userinfo.score = data.score || 0;
 					userinfo.username = data.nickName;
+					userinfo.introducer = data.introducer;
+					userinfo.invateCode = data.invateCode;
+					userinfo.canDrawAmt = data.canDrawAmt || 0;
+					userinfo.cashAmt = data.cashAmt || 0;
+					userinfo.applyAmt = data.applyAmt || 0;
 					userinfo.cstLevelCd = data.cstLevelCd;
 					self.set_userInfo(userinfo);
 					self.on_router_push(self.get_login_back_url());
@@ -246,9 +256,15 @@ let Util={
 				let userinfo = new base.userInfo();
 				userinfo.cstid = data.cstId;
 				userinfo.username = data.nickName;
-				userinfo.totalAmt = data.totalAmt ? data.totalAmt : 0;
-				userinfo.score = data.score ? data.score : 0;
+				userinfo.headImgUrl = data.headImgUrl || "../images/defhead.jpg";
+				userinfo.totalAmt = data.totalAmt || 0;
+				userinfo.score = data.score || 0;
 				userinfo.username = data.nickName;
+				userinfo.introducer = data.introducer;
+				userinfo.invateCode = data.invateCode;
+				userinfo.canDrawAmt = data.canDrawAmt || 0;
+				userinfo.cashAmt = data.cashAmt || 0;
+				userinfo.applyAmt = data.applyAmt || 0;
 				userinfo.cstLevelCd = data.cstLevelCd;
 				self.set_userInfo(userinfo);
 				self.on_router_push(self.get_login_back_url());

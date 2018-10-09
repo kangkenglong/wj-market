@@ -37,24 +37,44 @@
 		name: "shop_car",
 		data(){
 			return {
-				test_data: [
-					{'id': 0, 'name': '开关', 'desc': '三插座', 'price': 999, 'num': 1, 'select': true},
-					{'id': 1, 'name': '开关1', 'desc': '三插座1', 'price': 999, 'num': 2, 'select': false},
-					{'id': 2, 'name': '开关2', 'desc': '三插座2', 'price': 999, 'num': 1, 'select': true},
-					{'id': 3, 'name': '开关3', 'desc': '三插座3', 'price': 999, 'num': 10, 'select': false},
-					{'id': 4, 'name': '开关4', 'desc': '三插座4', 'price': 999, 'num': 2, 'select': true},
-					{'id': 5, 'name': '开关5', 'desc': '三插座5', 'price': 999, 'num': 1, 'select': false},
-					{'id': 6, 'name': '开关6', 'desc': '三插座6', 'price': 999, 'num': 1, 'select': false},
-				]
+				test_data: []
 			}
 		},
 		created(){
 			this.$bus.emit("show_nav", true);
-			this.$bus.emit("show_noinfo", [true, "亲，购物车空空的"]);
+		},
+		mounted() {
+			this.net_cmd_shopcar_list();// 测试
+			// if (this.$util.b_login()) {
+			// 	this.net_cmd_shopcar_list();
+			// }
+			// else {
+			// 	this.test_data = [];
+			// 	this.$bus.emit("show_noinfo", [true, "亲，购物车空空的"]);
+			// }
 		},
 		methods: {
 			on_tosel: function(){
-				this.$router.push("/settlement");
+				if (this.$util.b_login()) {
+					if (this.test_data.length > 0)
+						this.$router.push("/settlement");
+				}
+				else {
+					this.$bus.emit("tips", [true, "亲，请先登录"]);
+				}
+			},
+			net_cmd_shopcar_list: function() {
+				let self = this;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
+				self.$ajax.get(self.$url.carList + "?cstId=" + "KHBH1809090013").then(function(res) {
+					console.error("物车列表", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
+					}
+				})
 			}
 		},
 		beforeRouteLeave (to, from, next) {

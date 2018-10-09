@@ -35,7 +35,7 @@
 	export default {
 		data(){
 			return {
-				sy_slt: true,
+				sy_slt: false,
 				fl_slt: false,
 				gwc_slt: false,
 				gr_slt: false,
@@ -44,31 +44,65 @@
 		methods: {
 			to_index: function(){
 				this.$router.push("/");
-				this.sy_slt = true;
-				this.fl_slt = false;
-				this.gwc_slt = false;
-				this.gr_slt = false;
 			},
 			to_type: function(){
 				this.$router.push("/goods_type");
-				this.sy_slt = false;
-				this.fl_slt = true;
-				this.gwc_slt = false;
-				this.gr_slt = false;
+				// this.sy_slt = false;
+				// this.fl_slt = true;
+				// this.gwc_slt = false;
+				// this.gr_slt = false;
 			},
 			to_shopcar: function(){
 				this.$router.push("/shop_car");
-				this.sy_slt = false;
-				this.fl_slt = false;
-				this.gwc_slt = true;
-				this.gr_slt = false;
+				// this.sy_slt = false;
+				// this.fl_slt = false;
+				// this.gwc_slt = true;
+				// this.gr_slt = false;
 			},
 			to_main: function(){
 				this.$router.push("/main");
-				this.sy_slt = false;
-				this.fl_slt = false;
-				this.gwc_slt = false;
-				this.gr_slt = true;
+				// this.sy_slt = false;
+				// this.fl_slt = false;
+				// this.gwc_slt = false;
+				// this.gr_slt = true;
+			},
+			on_change_state: function(path) {
+				switch (path) {
+					case "/":
+						this.sy_slt = true;
+						this.fl_slt = false;
+						this.gwc_slt = false;
+						this.gr_slt = false;
+						break;
+					case "/goods_type":
+						this.sy_slt = false;
+						this.fl_slt = true;
+						this.gwc_slt = false;
+						this.gr_slt = false;
+						break;
+					case "/shop_car":
+						this.sy_slt = false;
+						this.fl_slt = false;
+						this.gwc_slt = true;
+						this.gr_slt = false;
+						break;
+					case "/main":
+						this.sy_slt = false;
+						this.fl_slt = false;
+						this.gwc_slt = false;
+						this.gr_slt = true;
+						break;
+				}
+			}
+		},
+		created() {
+			console.error(1);
+			this.on_change_state(this.$route.path);
+		},
+		watch: {
+			$route: function(router) {
+				console.error(router);
+				this.on_change_state(router.path);
 			}
 		}
 	}

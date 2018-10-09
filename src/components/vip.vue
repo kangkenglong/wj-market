@@ -62,31 +62,23 @@
 			this.$bus.emit("show_nav", false);
 		},
 		mounted(){
-			this.net_cmd_vip_info();
+			this.update_userInfo();
 		},
 		methods: {
 			on_back: function(){
 				this.$router.go(-1);
 			},
-			net_cmd_vip_info: function() {
-				let self = this;
-				this.$ajax.get(this.$url.vipinfo).then(function(res) {
-					console.error(res);
-					if (res.data.code == self.CODE.SUCCESS) {
-						let data = res.data.body;
-						self.username = data.nickName;
-						self.headImgUrl = data.headImgUrl ? data.headImgUrl : require("../assets/images/defhead.jpg");
-						self.introducer = data.introducer ? data.introducer : "无";
-						self.invateCode = data.invateCode ? data.invateCode : "暂无";
-						self.totalAmt = data.totalAmt ? data.totalAmt : 0;
-						self.cashAmt = data.cashAmt ? data.cashAmt : 0;
-						self.canDrawAmt = data.canDrawAmt ? data.canDrawAmt : 0;
-						console.error("成功");
-					}
-					else {
-
-					}
-				})
+			update_userInfo: function() {
+				let userinfo = this.$util.get_userInfo();
+				this.username = userinfo.username;
+				this.headImgUrl = userinfo.headImgUrl;
+				this.invateCode = userinfo.invateCode;
+				this.username = userinfo.username;
+				this.totalAmt = userinfo.totalAmt;
+				this.cashAmt = userinfo.cashAmt;
+				this.canDrawAmt = userinfo.canDrawAmt;
+				this.applyAmt = userinfo.applyAmt;
+				this.scroe = userinfo.scroe;
 			}
 		}
 	}
