@@ -44,13 +44,14 @@ let base = {
 	goodsCar: function() {
 		this.id = 0;// 主键
 		this.cartId = "";// 购物车编号
-		this.goodsID = "";// 商品id
+		this.goodsId = "";// 商品id
 		this.goodsTitle = "";// 商品标题
 		this.goodsName = "";// 商品名字
 		this.goodsPrice = 0;// 商品价格
 		this.goodsDiscount = 1;// 折扣
 		this.imageUrl = "";// 图片
 		this.goodsNum = 0;// 商品数量
+		this.select = false;// 商品是否选择
 	}
 }
 

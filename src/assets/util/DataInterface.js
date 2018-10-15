@@ -23,7 +23,8 @@ let url={
 	goodsIsCol: globalURL + "/user/collect/checkGoodsCollectStatus/v1.0",// 商品是否收藏
 	delGIClt: globalURL + "/user/collect/cancelGoodsCollect/v1.0",// 删除商品(商品详情)
 	addCar: globalURL + "/user/cart/saveCart/v1.0",// 加入购物车
-	carList: globalURL + "/user/cart/findCartList/v1.0"// 购物车列表
+	carList: globalURL + "/user/cart/findCartList/v1.0",// 购物车列表
+	udCar: globalURL + "/user/cart/updateCart/v1.0"// 购物车修改
 	// getAccessToken: globalURL + "/public/login/getAccessToken/v1.0"
 }
 

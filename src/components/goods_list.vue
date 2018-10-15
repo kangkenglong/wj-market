@@ -49,7 +49,7 @@
 				pages: 0,
 				b_net: false,// 是否在请求中 防止滚动到末尾多次请求数据
 				b_tips: false,// 是否显示已无更多的商品提示
-				b_load_move: true,// 是否开启加载更多
+				b_scroll: false,// 是否加载后滚动
 				test_data: [
 				]
 			}
@@ -112,8 +112,10 @@
 						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
 					}
 				}).then(function() {
-					self.$util.scroll_to(self.$util.get_scroll_top());
-					self.b_load_move = true;// 开启加载更多
+					if (!self.b_scroll) {
+						self.$util.scroll_to(self.$util.get_scroll_top());
+						// self.b_scroll = false;// 开启加载更多
+					}
 				})
 			},
 			on_cut_filtare: function(type){
@@ -209,18 +211,19 @@
 			},
 			on_load_more_goods: function() {
 				console.error("处理滚动回调");
-				if (this.b_load_move) {
-					if (this.pages > this.pageNum && !this.b_net) {
-						this.b_tips = false;
-						this.b_net = true;
-						this.pageNum++;
-						this.pageSize = 8;
-						this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
-					}
-					else {
-						this.b_tips = true;
-					}
+				// if (this.b_scroll) {
+				if (this.pages > this.pageNum && !this.b_net) {
+					this.b_tips = false;
+					this.b_net = true;
+					this.pageNum++;
+					this.pageSize = 8;
+					this.b_scroll = true;
+					this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
 				}
+				else {
+					this.b_tips = true;
+				}
+				// }
 			}
 		},
 		beforeRouteLeave (to, from, next) {
