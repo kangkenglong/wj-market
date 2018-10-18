@@ -58,6 +58,7 @@
 			// ---------回到原来浏览的位置 begin----------
 			let pageNum = this.$util.get_page()[0];
 			let pageSize = this.$util.get_page()[1];
+			this.net_cmd_get_pages();
 			if (pageNum == -1 && pageSize == -1) {
 				this.$util.reset_scroll_top();
 				console.error("1", this.$util.get_page());
@@ -66,6 +67,7 @@
 			else {
 				console.error("2", this.$util.get_page());
 				this.pageNum = pageNum;
+				this.b_scroll = true;
 				this.on_cmd_get_goods_list(1, pageSize * pageNum);
 			}
 			// -------end-------
@@ -76,7 +78,7 @@
 			on_back: function(){
 				this.pageNum = -1;
 				this.pageSize = -1;
-				this.$router.go(-1);
+				this.$router.push("/");
 			},
 			on_cmd_get_goods_list: function(pageNum, pageSize){
 				console.error("请求", pageNum, pageSize);
@@ -105,16 +107,25 @@
 						else {
 							self.$bus.emit("show_noinfo", [true, "暂无商品"]);
 						}
-						self.pages = res.data.body.pages;
+						// self.pages = res.data.body.pages;
 						self.b_tips = false;
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
 					}
 				}).then(function() {
-					if (!self.b_scroll) {
+					if (self.b_scroll) {
 						self.$util.scroll_to(self.$util.get_scroll_top());
 						// self.b_scroll = false;// 开启加载更多
+					}
+				})
+			},
+			net_cmd_get_pages: function() {
+				let self = this;
+				self.$ajax.get(this.$url.goodslist + "?pageSize=8&pageNum=1").then(function (res) {
+					console.error("请求页数", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.pages = res.data.body.pages;
 					}
 				})
 			},
@@ -217,7 +228,7 @@
 					this.b_net = true;
 					this.pageNum++;
 					this.pageSize = 8;
-					this.b_scroll = true;
+					this.b_scroll = false;
 					this.on_cmd_get_goods_list(this.pageNum, this.pageSize);
 				}
 				else {
@@ -229,6 +240,9 @@
 		beforeRouteLeave (to, from, next) {
 			// 导航离开该组件的对应路由时调用
 			// 可以访问组件实例 `this`
+			if (to.path == "/goods_info") {
+				this.$util.set_goodsinfo_from_path("/goodslist");
+			}
 			if (this.pageNum == -1 && this.pageSize == -1) {
 				this.$util.reset_scroll_top();
 			}

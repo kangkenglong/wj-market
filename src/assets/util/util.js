@@ -133,36 +133,64 @@ let Util={
 		if(r!=null)return unescape(r[2]);
 		return null;
 	},
+	// 在前往详情页之前，缓存当前页面地址
+	set_goodsinfo_from_path: function(path) {
+		this.set_sessionStorage("frompath", path);
+	},
+	// 在前往详情页之前的缓存地址
+	get_goodsinfo_from_path: function () {
+		let path = this.get_sessionStorage_by_key("frompath");
+		return path
+	},
+	del_goodsinfo_from_path: function() {
+		this.set_sessionStorage("frompath", "");
+	},
+	/*************************login begin****************************/
 	// 登录中间页
 	set_login_page: function() {
 		// return this.get_href_path() + "#/login";
-		let path = this.get_href_path();
+		let url = this.get_href_path();
 
-		this.set_sessionStorage("loginUrl", path + "#/login");
-		return path + "#/login";
+		this.set_sessionStorage("loginUrl", url + "#/login");
+		return url + "#/login";
 	},
 	get_login_page: function() {
 		let url = this.get_sessionStorage_by_key("loginUrl");
 		if (!str) return -1;
 		return url;
 	},
+	// 解析地址栏 缓存#前面地址
+	set_href_path: function() {
+		let url = window.location.href.split("#")[0];
+		this.set_sessionStorage("hrefurl", url);
+		console.error("解析地址栏", this.get_sessionStorage_by_key("hrefurl"));
+	},
 	// 解析地址栏 取#前面的数据
 	get_href_path: function() {
-		let path = window.location.href.split("#")[0];
-		console.error("wlf_path", path);
-		return path;
+		// let path = window.location.href.split("#")[0];
+		// console.error("wlf_path", path);
+		let url = this.get_sessionStorage_by_key("hrefurl");
+		return url;
 	},
 	// 保存跳转登录页之前的路径
-	set_login_back_url: function(path) {
+	set_login_back_url: function(path, route) {
 		if (!path) return;
+		if (!route) return;
 		// this.login_back_url = path;
 		this.set_sessionStorage("backurl", path);
+		this.set_sessionStorage("router", route);
 	},
 	// 获取跳转登录页之前的路径
 	get_login_back_url: function() {
 		let url = this.get_sessionStorage_by_key("backurl");
 		if (!url) return -1;
 		return url;
+	},
+	// 获取跳转登录页之前的路由路径
+	get_login_router_path: function() {
+		let path = this.get_sessionStorage_by_key("router");
+		if (!path) return "/";
+		return path;
 	},
 	/**
 	* 登录
@@ -181,7 +209,7 @@ let Util={
 		let code = this.get_query_string("code");
 		if (!code) {
 			// 没有code 重新走on_login
-			// this.on_login();
+			this.on_login();
 		}
 		else {
 			let state = this.$util.get_query_string("state");
@@ -274,6 +302,7 @@ let Util={
 			}
 		})
 	},
+	/*************************login end****************************/
 	// 重定向至指定位置
 	on_router_push: function(path) {
 		window.location.href = path;

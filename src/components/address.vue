@@ -33,6 +33,7 @@
 				b_net: false,// 是否在请求中
 				b_tips: false,// 是否提示没有更多商品
 				b_load_move: true,// 是否开启加载更多
+				b_scroll: false,// 是否加载后滚动
 				pageNum: 1,
 				pageSize: 12,
 				pages: 0
@@ -45,6 +46,7 @@
 			// ---------回到原来浏览的位置 begin----------
 			let pageNum = this.$util.get_page()[0];
 			let pageSize = this.$util.get_page()[1];
+			this.net_cmd_get_pages();
 			if (pageNum == -1 && pageSize == -1) {
 				this.$util.reset_scroll_top();
 				console.error("1", this.$util.get_page());
@@ -53,6 +55,7 @@
 			else {
 				console.error("2", this.$util.get_page());
 				this.pageNum = pageNum;
+				this.b_scroll = true;
 				this.net_cmd_addr_list(1, pageSize * pageNum);
 			}
 			// -------end-------
@@ -102,15 +105,26 @@
 						else {
 							self.$bus.emit("show_noinfo", [true, "快来添加地址吧"]);
 						}
-						self.pages = res.data.body.pages;
+						// self.pages = res.data.body.pages;
 						self.b_tips = false;
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
 					}
 				}).then(function() {
-					self.$util.scroll_to(self.$util.scroll_top);
+					if (self.b_scroll) {
+						self.$util.scroll_to(self.$util.get_scroll_top());
+					}
 					self.b_load_move = true;// 开启加载更多
+				})
+			},
+			net_cmd_get_pages: function() {
+				let self = this;
+				self.$ajax.get(this.$url.addrlist + "&pageSize=12&pageNum=1").then(function (res) {
+					console.error("请求页数", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.pages = res.data.body.pages;
+					}
 				})
 			},
 			on_load_more_addr: function() {
@@ -121,6 +135,7 @@
 						this.b_net = true;
 						this.pageNum++;
 						this.pageSize = 12;
+						this.b_scroll = false;// 加载更多后不滚动至指定位置
 						this.net_cmd_addr_list(this.pageNum, this.pageSize);
 					}
 					else {
@@ -137,9 +152,11 @@
 						self.$bus.emit("tips", [true, "删除成功"]);
 						self.addr_list.splice(index, 1);
 						self.$util.save_scroll_top();
-						 self.b_load_move = false;// 防止后面addr_list至为[]时 触发加载更多
+						self.b_scroll = true;
+						self.b_load_move = false;// 防止后面addr_list至为[]时 触发加载更多
 						self.addr_list = [];
 						// self.pageSize = 12 * self.pageNum;
+						self.net_cmd_get_pages();
 						self.net_cmd_addr_list(1, 12 * self.pageNum);
 					}
 					else {

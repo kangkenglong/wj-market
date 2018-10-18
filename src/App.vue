@@ -36,7 +36,8 @@ export default {
       save_data: null,
       tips_txt: "",
       tips_flag: false,
-      counts: 0
+      counts: 0,
+      b_exit: true
     }
   },
   created() {
@@ -44,9 +45,12 @@ export default {
     this.$bus.on('show_noinfo', this.on_show_noinfo);
     this.$bus.on('save_data', this.on_save_data);
     this.$bus.on('tips', this.on_tips);
+    this.$bus.on('dontexit', this.on_dont_exit);
     this.on_tick();
     window.addEventListener("popstate", e => {
-      this.is_out_app();
+      if (this.b_exit)
+        this.is_out_app();
+      this.b_exit = true;
     }, false)
   },
   methods: {
@@ -74,6 +78,9 @@ export default {
       this.tips_flag = data[0];
       this.tips_txt = data[1];
     },
+    on_dont_exit: function() {
+      this.b_exit = false;
+    },
     on_tick: function() {
       setInterval(() => {
         if (this.tips_flag) {
@@ -90,6 +97,7 @@ export default {
   watch: {
     "$route": function(to, from) {
       this.url = from.path;
+      console.error(this.url)
     }
   }
 }

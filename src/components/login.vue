@@ -30,13 +30,16 @@
 		},
 		methods: {
 			on_back: function() {
-				let path = this.$util.get_path();
-				if (path == -1) {
-					this.$bus.emit("tips", "参数有误，请与客服联系");
-					return;
+				let path = this.$util.get_login_router_path();
+				let url = this.$util.get_href_path();
+				console.error(path, url);
+				if (path == "/main") {
+					this.$bus.emit("dontexit");
+					window.location.href = url + "#/";
 				}
-				this.$router.push("/");
-				// window.location.href = path;
+				else {
+					window.location.href = url + "#" +path;
+				}
 			}
 		}
 	}

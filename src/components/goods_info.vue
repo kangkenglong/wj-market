@@ -82,8 +82,17 @@
 		},
 		methods: {
 			on_back: function(){
-				return window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
+				// return window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
 				// this.$router.go(-1);
+				let path = this.$util.get_goodsinfo_from_path();
+				console.error(path);
+				if (path) {
+					this.$router.push(path);
+					this.$util.del_goodsinfo_from_path();
+				}
+				else {
+					this.$router.go(-1)
+				}
 			},
 			on_kf: function(){
 				this.$bus.emit("tips", [true, "暂无客服人员"]);
@@ -100,25 +109,27 @@
 				}
 				else {
 					// 让用户去登录
+					this.$util.set_login_back_url(window.location.href, window.location.href.split("#")[1]);
 					this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
-					this.$util.on_login();
+					this.$router.push("/login");
 				}
 			},
 			on_goto_sc: function() {
 				this.$router.push("/shop_car");
 			},
 			on_add_sc: function() {
-				this.net_cmd_add_car();// 测试
-				// if (this.$util.b_login()) {
-				// 	if (this.goodsId != 0) {
-				// 		this.net_cmd_add_car();
-				// 	}
-				// }
-				// else {
-				// 	// 让用户去登录
-				// 	this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
-				// 	this.$util.on_login();
-				// }
+				// this.net_cmd_add_car();// 测试
+				if (this.$util.b_login()) {
+					if (this.goodsId != 0) {
+						this.net_cmd_add_car();
+					}
+				}
+				else {
+					// 让用户去登录
+					this.$util.set_login_back_url(window.location.href, window.location.href.split("#")[1]);
+					this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
+					this.$router.push("/login");
+				}
 			},
 			b_collect_goods: function() {
 				// 先判断用户是否登录

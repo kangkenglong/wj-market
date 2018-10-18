@@ -69,13 +69,15 @@
 			this.$bus.emit("show_nav", true);
 		},
 		mounted(){
-			this.$util.set_login_back_url(window.location.href);
+			this.$util.set_login_back_url(window.location.href, "/main");
 			if (this.$util.b_login()) {
 				// 用户已经登录
 				this.update_userInfo();
 			}
 			else {
-				this.$util.on_login();
+				// this.$util.on_login();// 直接登录
+				this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
+				this.$router.push("/login");
 			}
 		},
 		methods: {

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="main"  ref="cnt">
-			<div class="m_goods" v-for="goods in sc_data" :key="goods.id">
+			<div class="m_goods" v-for="(goods, i) in sc_data" :key="goods.id">
 				<span :class="{'m_g_s': true, 'selected': goods.select}"></span>
 				<router-link  :to="{path: 'goods_info', query: {'goodsid': goods.goodsId}}">
 					<img :src="goods.imageUrl">
@@ -12,7 +12,7 @@
 					</div>
 				</router-link>
 				<div class="m_g_o">
-					<span class="g_o_del">删除</span>
+					<span class="g_o_del" @click="on_del_addr(goods.id, i)">删除</span>
 					<div class="g_o_ad">
 						<span class="o_del" @click="on_del_num(goods.id, goods.goodsNum)"></span>
 						<span class="o_num">{{goods.goodsNum}}</span>
@@ -57,6 +57,7 @@
 			// ---------回到原来浏览的位置 begin----------
 			let pageNum = this.$util.get_page()[0];
 			let pageSize = this.$util.get_page()[1];
+			this.net_cmd_get_pages();
 			if (pageNum == -1 && pageSize == -1) {
 				this.$util.reset_scroll_top();
 				console.error("1", this.$util.get_page());
@@ -65,6 +66,7 @@
 			else {
 				console.error("2", this.$util.get_page());
 				this.pageNum = pageNum;
+				this.b_scroll = true;
 				this.net_cmd_shopcar_list(1, pageSize * pageNum);
 			}
 			// -------end-------
@@ -139,7 +141,6 @@
 						let length = data.length;
 						if (length > 0) {
 							data.forEach(item => {
-								console.error("goods", item);
 								let gc = new self.$base.goodsCar();
 								gc.id = item.id;
 								gc.cartId = item.cartId;
@@ -157,33 +158,64 @@
 						else {
 							self.$bus.emit("show_noinfo", [true, "购物车空空的"]);
 						}
-						self.pages = res.data.body.pages;
+						// self.pages = res.data.body.pages;
 						self.b_tips = false;
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器在开小差，请稍后在试"]);
 					}
 				}).then(function() {
-					if (!self.b_scroll)
+					if (self.b_scroll)
 						self.$util.scroll_to(self.$util.get_scroll_top());
-					// self.b_scroll = true;// 开启加载更多
+					self.b_load_move = true;// 开启加载更多
+				})
+			},
+			net_cmd_get_pages: function() {
+				let self = this;
+				let userinfo = self.$util.get_userInfo();
+				let cstId = userinfo.cstid;
+				self.$ajax.get(self.$url.carList + "?cstId=" + "KHBH1809090013" + "&pageSize=8&pageNum=1").then(function (res) {
+					console.error("请求页数", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.pages = res.data.body.pages;
+					}
 				})
 			},
 			on_load_more_goods: function() {
 				console.error("处理滚动回调");
-				// if (this.b_load_move) {
+				if (this.b_load_move) {
 					if (this.pages > this.pageNum && !this.b_net) {
 						this.b_tips = false;
 						this.b_net = true;
 						this.pageNum++;
 						this.pageSize = 8;
-						this.b_scroll = true;
+						this.b_scroll = false;
 						this.net_cmd_shopcar_list(this.pageNum, this.pageSize);
 					}
 					else {
 						this.b_tips = true;
 					}
-				// }
+				}
+			},
+			on_del_addr: function(id, index) {
+				if (id == undefined) return;
+				let self = this;
+				this.$ajax.get(this.$url.delCar + "?id=" + id).then(function (res) {
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.$bus.emit("tips", [true, "删除成功"]);
+						self.sc_data.splice(index, 1);
+						self.$util.save_scroll_top();
+						self.b_scroll = true;
+						self.b_load_move = false;// 防止后面sc_data至为[]时 触发加载更多
+						self.sc_data = [];
+						// self.pageSize = 12 * self.pageNum;
+						self.net_cmd_get_pages();
+						self.net_cmd_shopcar_list(1, 8 * self.pageNum);
+					}
+					else {
+						self.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
+					}
+				})
 			}
 		},
 		beforeRouteLeave (to, from, next) {

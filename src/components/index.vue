@@ -66,6 +66,7 @@
 			}
 		},
 		created(){
+			this.$util.set_href_path();
 			// console.error(1);
 			this.$bus.emit("show_nav", true);
 			// this.$bus.emit("show_nav", true);
@@ -141,6 +142,9 @@
 			// 导航离开该组件的对应路由时调用
 			// 可以访问组件实例 `this`
 			// this.$util.save_scroll_top();
+			if (to.path == "/goods_info") {
+				this.$util.set_goodsinfo_from_path("/");
+			}
 			next();
 		}
 	}

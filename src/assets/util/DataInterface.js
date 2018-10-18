@@ -1,6 +1,6 @@
 
-// let globalURL="http://132.232.58.25/shop-app-pc/"
-let globalURL="/api"
+let globalURL="http://132.232.58.25/shop-app-pc"
+// let globalURL="/api"
 // let globalURL="http://www.kwp8.top/shop-app-pc"
 let url={
 	goodslist: globalURL + "/public/goods/findGoodsList/v1.0",// 商品列表
@@ -24,7 +24,8 @@ let url={
 	delGIClt: globalURL + "/user/collect/cancelGoodsCollect/v1.0",// 删除商品(商品详情)
 	addCar: globalURL + "/user/cart/saveCart/v1.0",// 加入购物车
 	carList: globalURL + "/user/cart/findCartList/v1.0",// 购物车列表
-	udCar: globalURL + "/user/cart/updateCart/v1.0"// 购物车修改
+	udCar: globalURL + "/user/cart/updateCart/v1.0",// 购物车修改
+	delCar: globalURL + "/user/cart/deleteCart/v1.0"// 购物车修改
 	// getAccessToken: globalURL + "/public/login/getAccessToken/v1.0"
 }
 
