@@ -8,21 +8,21 @@
 			</div>
 		</div>
 		<div class="m_order">
-			<router-link to="/order">
+			<router-link to="/order_dfk">
 				<img src="../assets/images/icon11.png">
 				<p>待付款</p>
 			</router-link>
-			<router-link to="/order">
+			<router-link to="/order_dfh">
 				<img src="../assets/images/icon12.png">
-				<p>待付款</p>
+				<p>待发货</p>
+			</router-link>
+			<router-link to="/order_dsh">
+				<img src="../assets/images/icon14.png">
+				<p>待收货</p>
 			</router-link>
 			<router-link to="/order">
 				<img src="../assets/images/icon13.png">
-				<p>待付款</p>
-			</router-link>
-			<router-link to="/order">
-				<img src="../assets/images/icon14.png">
-				<p>待付款</p>
+				<p>售后</p>
 			</router-link>
 		</div>
 		<router-link to="/order" class="m_a_o item">
@@ -77,7 +77,7 @@
 			else {
 				// this.$util.on_login();// 直接登录
 				this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
-				this.$router.push("/login");
+				// this.$router.push("/login");
 			}
 		},
 		methods: {
@@ -115,7 +115,7 @@
 		justify-content: space-between;
 	}
 	.m_name p{
-		font-size: 0.3rem;
+		font-size: 0.33rem;
 		color: #fff;
 		line-height: 0.4rem;
 	}
@@ -139,7 +139,7 @@
 		width: 0.5rem;
 	}
 	.m_order a p{
-		font-size: 0.2rem;
+		font-size: 0.25rem;
 		text-align: center;
 		margin-top: 0.1rem;
 		color: #606060;
@@ -167,7 +167,7 @@
 		height: 0.5rem;
 	}
 	.item p{
-		font-size: 0.28rem;
+		font-size: 0.3rem;
 		line-height: 0.5rem;
 		margin-left: 0.1rem;
 		color: #606060;
@@ -176,7 +176,7 @@
 		width: 0.3rem!important;
 		height: 0.3rem!important;
 		position: absolute;
-		right: 0.4rem;
+		right: 0.2rem;
 		top: 50%;
 		margin-top: -0.15rem;
 	}

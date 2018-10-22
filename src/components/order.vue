@@ -6,10 +6,10 @@
 		</div>
 		<div class="nav">
 			<a href="javascript:void(0)" class="selected">全部</a>
-			<router-link to="/">待付款</router-link>
-			<router-link to="/">待发货</router-link>
-			<router-link to="/">待收货</router-link>
-			<router-link to="/">退款</router-link>
+			<router-link to="/order_dfk">待付款</router-link>
+			<router-link to="/order_dfh">待发货</router-link>
+			<router-link to="/order_dsh">待收货</router-link>
+			<router-link to="/order_sh">售后</router-link>
 		</div>
 		<div class="main">
 			<div class="m_goods" @click="on_show_info">
@@ -45,7 +45,7 @@
 		},
 		methods: {
 			on_back: function(){
-				this.$router.go(-1);
+				this.$router.push("/main");
 			},
 			on_show_info: function(){
 				this.$router.push("/order_info")
@@ -73,7 +73,7 @@
 		width: 1rem;
 		height: 0.77rem;
 		color: #606060;
-		font-size: 0.26rem;
+		font-size: 0.3rem;
 		padding-top: 0.25rem;
 		text-align: center;
 	}
@@ -94,8 +94,8 @@
 	}
 	.m_g_t{
 		width: 100%;
-		padding-bottom: 0.3rem;
-		font-size: 0.25rem;
+		padding-bottom: 0.2rem;
+		font-size: 0.3rem;
 		color: #555555;
 		display: flex;
 		border-bottom: 0.02rem solid #d9d9d9;
@@ -144,13 +144,13 @@
 		margin-top: 0.1rem;
 	}
 	.m_g_p{
-		font-size: 0.33rem;
-		color: #000;
+		font-size: 0.35rem;
+		color: rgb(255, 79, 71);
 		text-align: right;
 		padding: 0.3rem 0px 0px;
 	}
 	.m_g_p span{
-		font-size: 0.2rem;
+		font-size: 0.3rem;
 		color: #686868;
 	}
 </style>

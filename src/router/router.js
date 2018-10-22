@@ -7,6 +7,10 @@ import Shop_Car from '@/components/shop_car'
 import Main from '@/components/main'
 import Collection from '@/components/collection'
 import Order from '@/components/order'
+import Order_dfk from '@/components/order_dfk'
+import Order_dfh from '@/components/order_dfh'
+import Order_dsh from '@/components/order_dsh'
+import Order_sh from '@/components/order_sh'
 import Order_Info from '@/components/order_info'
 import Vip from '@/components/vip'
 import Search from '@/components/search'
@@ -62,6 +66,26 @@ export default new Router({
       path: '/order',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '/order_dfk',
+      name: 'Order_dfk',
+      component: Order_dfk
+    },
+    {
+      path: '/order_dfh',
+      name: 'Order_dfh',
+      component: Order_dfh
+    },
+    {
+      path: '/order_dsh',
+      name: 'Order_dsh',
+      component: Order_dsh
+    },
+    {
+      path: '/order_sh',
+      name: 'Order_sh',
+      component: Order_sh
     },
     {
       path: '/order_info',

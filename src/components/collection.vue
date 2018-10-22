@@ -25,15 +25,36 @@
 		name: "shop_car",
 		data(){
 			return {
-				clt_list: [
-				],
+				clt_list: [],
 				b_net: false,// 是否在请求中
 				b_tips: false,// 是否提示没有更多商品
 				b_load_move: true,// 是否开启加载更多
+				b_scroll: false,// 是否加载后滚动
 				pageNum: 1,
 				pageSize: 12,
 				pages: 0
 			}
+		},
+		created(){
+			this.$bus.emit("show_nav", false);
+		},
+		mounted(){
+			// ---------回到原来浏览的位置 begin----------
+			let pageNum = this.$util.get_page()[0];
+			let pageSize = this.$util.get_page()[1];
+			this.net_cmd_get_pages();
+			if (pageNum == -1 && pageSize == -1) {
+				this.$util.reset_scroll_top();
+				console.error("1", this.$util.get_page());
+				this.net_cmd_clt_list(this.pageNum, 12);
+			}
+			else {
+				console.error("2", this.$util.get_page());
+				this.pageNum = pageNum;
+				this.net_cmd_clt_list(1, pageSize * pageNum);
+			}
+			// -------end-------
+			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_clt);
 		},
 		methods: {
 			on_back: function(){
@@ -69,15 +90,26 @@
 						else {
 							self.$bus.emit("show_noinfo", [true, "快把喜欢的宝贝添加进来吧"]);
 						}
-						self.pages = res.data.body.pages;
+						// self.pages = res.data.body.pages;
 						self.b_tips = false;
 					}
 					else {
 						self.$bus.emit("tips", [true, "服务器开小差，请稍后在试"]);
 					}
 				}).then(function() {
-					self.$util.scroll_to(self.$util.scroll_top);
+					if (self.b_scroll) {
+						self.$util.scroll_to(self.$util.get_scroll_top());
+					}
 					self.b_load_move = true;// 开启加载更多
+				})
+			},
+			net_cmd_get_pages: function() {
+				let self = this;
+				self.$ajax.get(this.$url.cltlist + "&pageSize=12&pageNum=1").then(function (res) {
+					console.error("请求页数", res);
+					if (res.data.code == self.CODE.SUCCESS) {
+						self.pages = res.data.body.pages;
+					}
 				})
 			},
 			on_load_more_clt: function() {
@@ -88,6 +120,7 @@
 						this.b_net = true;
 						this.pageNum++;
 						this.pageSize = 12;
+						this.b_scroll = false;// 加载更多后不滚动至指定位置
 						this.net_cmd_clt_list(this.pageNum, this.pageSize);
 					}
 					else {
@@ -104,9 +137,11 @@
 						self.$bus.emit("tips", [true, "删除成功"]);
 						self.clt_list.splice(index, 1);
 						self.$util.save_scroll_top();
-						 self.b_load_move = false;// 防止后面clt_list至为[]时 触发加载更多
+						self.b_scroll = true;
+						self.b_load_move = false;// 防止后面clt_list至为[]时 触发加载更多
 						self.clt_list = [];
 						// self.pageSize = 12 * self.pageNum;
+						self.net_cmd_get_pages();
 						self.net_cmd_clt_list(1, 12 * self.pageNum);
 					}
 					else {
@@ -118,26 +153,6 @@
 				console.error(id);
 				this.$router.push({path: "/goods_info", query: {"goodsid": id}});
 			}
-		},
-		created(){
-			this.$bus.emit("show_nav", false);
-		},
-		mounted(){
-			// ---------回到原来浏览的位置 begin----------
-			let pageNum = this.$util.get_page()[0];
-			let pageSize = this.$util.get_page()[1];
-			if (pageNum == -1 && pageSize == -1) {
-				this.$util.reset_scroll_top();
-				console.error("1", this.$util.get_page());
-				this.net_cmd_clt_list(this.pageNum, 12);
-			}
-			else {
-				console.error("2", this.$util.get_page());
-				this.pageNum = pageNum;
-				this.net_cmd_clt_list(1, pageSize * pageNum);
-			}
-			// -------end-------
-			this.$util.set_scroll_el(this.$refs.cnt, 10, this, this.on_load_more_clt);
 		},
 		beforeRouteLeave (to, from, next) {
 			// 导航离开该组件的对应路由时调用

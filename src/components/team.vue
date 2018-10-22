@@ -76,7 +76,7 @@
 						this.$bus.emit("tips", [true, "服务器开小差，请稍后再试"]);
 					}
 				}).then(function() {
-					self.$util.scroll_to(self.$util.scroll_top);
+					// self.$util.scroll_to(self.$util.scroll_top);
 					self.b_load_move = true;// 开启加载更多
 				})
 			},
