@@ -20,7 +20,7 @@
 				<img src="../assets/images/icon14.png">
 				<p>待收货</p>
 			</router-link>
-			<router-link to="/order">
+			<router-link to="/order_sh">
 				<img src="../assets/images/icon13.png">
 				<p>售后</p>
 			</router-link>
@@ -77,7 +77,7 @@
 			else {
 				// this.$util.on_login();// 直接登录
 				this.$bus.emit("tips", [true, "您暂未登录，请先登录"]);
-				// this.$router.push("/login");
+				this.$router.push("/login");
 			}
 		},
 		methods: {

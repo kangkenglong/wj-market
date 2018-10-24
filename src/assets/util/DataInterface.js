@@ -1,7 +1,8 @@
 
-let globalURL="http://132.232.58.25/shop-app-pc"
-// let globalURL="/api"
+// let globalURL="http://132.232.58.25/shop-app-pc"
+let globalURL="/api"
 // let globalURL="http://www.kwp8.top/shop-app-pc"
+// let globalURL="http://www.foolishsister.com/shop-app-pc"
 let url={
 	goodslist: globalURL + "/public/goods/findGoodsList/v1.0",// 商品列表
 	goodsinfo: globalURL + "/public/goods/getGoods/v1.0?goodsId=",// 商品详情

@@ -151,12 +151,12 @@ let Util={
 		// return this.get_href_path() + "#/login";
 		let url = this.get_href_path();
 
-		this.set_sessionStorage("loginUrl", url + "#/login");
-		return url + "#/login";
+		this.set_sessionStorage("loginUrl", url + "%23/login");
+		return url + "%23/login";
 	},
 	get_login_page: function() {
 		let url = this.get_sessionStorage_by_key("loginUrl");
-		if (!str) return -1;
+		if (!url) return -1;
 		return url;
 	},
 	// 解析地址栏 缓存#前面地址
@@ -212,7 +212,7 @@ let Util={
 			this.on_login();
 		}
 		else {
-			let state = this.$util.get_query_string("state");
+			let state = this.get_query_string("state");
 			if (!state) {
 				// this.$bus.emit("tips", "参数有误，请与客服联系");
 			}
@@ -239,7 +239,7 @@ let Util={
 	net_cmt_get_su_code: function() {
 		let path = this.get_login_page();
 		console.error("net_cmt_get_su_code", url.getacctkn + "?redirect_uri=" + path);
-		// window.location.href = url.getacctkn + "?redirect_uri=" + path;
+		window.location.href = url.getacctkn + "?redirect_uri=" + path;
 	},
 	// 把微信回调code传给后端
 	net_cmt_snsapi_base_code: function(code) {
