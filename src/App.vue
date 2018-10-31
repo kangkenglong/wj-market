@@ -41,6 +41,7 @@ export default {
     }
   },
   created() {
+    this.$util.set_vue(this);// 绑定vue实例
     this.$bus.on('show_nav', this.on_show_nav);
     this.$bus.on('show_noinfo', this.on_show_noinfo);
     this.$bus.on('save_data', this.on_save_data);

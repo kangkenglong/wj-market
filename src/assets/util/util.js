@@ -12,6 +12,11 @@ let Util={
 	scroll_dis: 0,// 触发距离
 	pageNum: -1,
 	pageSize: -1,
+	vue: null,
+	// 绑定vue实例
+	set_vue: function(vue) {
+		this.vue = vue;
+	},
 	// 设置滚动事件
 	set_scroll_el: function(el, dis, call, callback) {
 		if (!el) return;
@@ -214,7 +219,7 @@ let Util={
 		else {
 			let state = this.get_query_string("state");
 			if (!state) {
-				// this.$bus.emit("tips", "参数有误，请与客服联系");
+				this.vue.$bus.emit("tips", [true, "服务器开小差，请与客服联系"]);
 			}
 			else {
 				if (state == "base") {
@@ -240,8 +245,7 @@ let Util={
 		let path = this.get_login_page();
 		console.error("net_cmt_get_su_code", url.getacctkn + "?redirect_uri=" + path);
 		window.location.href = url.getacctkn + "?redirect_uri=" + path;
-	},
-	// 把微信回调code传给后端
+	},	// 把微信回调code传给后端
 	net_cmt_snsapi_base_code: function(code) {
 		let self = this;
 		axios.get(url.getopenid + "?code=" + code + "&redirect_uri=" + self.get_login_page()).then(function(res) {
@@ -278,27 +282,32 @@ let Util={
 		let self = this;
 		axios.get(url.getuserinfo + "?code=" + code).then(function(res) {
 			console.error("net_cmt_snsapi_userinfo_code", res);
-			let data = res.data.body;
-			if (data.cstId) {
-				// 存在用户数据 缓存数据
-				let userinfo = new base.userInfo();
-				userinfo.cstid = data.cstId;
-				userinfo.username = data.nickName;
-				userinfo.headImgUrl = data.headImgUrl || "../images/defhead.jpg";
-				userinfo.totalAmt = data.totalAmt || 0;
-				userinfo.score = data.score || 0;
-				userinfo.username = data.nickName;
-				userinfo.introducer = data.introducer;
-				userinfo.invateCode = data.invateCode;
-				userinfo.canDrawAmt = data.canDrawAmt || 0;
-				userinfo.cashAmt = data.cashAmt || 0;
-				userinfo.applyAmt = data.applyAmt || 0;
-				userinfo.cstLevelCd = data.cstLevelCd;
-				self.set_userInfo(userinfo);
-				self.on_router_push(self.get_login_back_url());
+			if (res.data.code == 10000) {
+				let data = res.data.body;
+				if (data.cstId) {
+					// 存在用户数据 缓存数据
+					let userinfo = new base.userInfo();
+					userinfo.cstid = data.cstId;
+					userinfo.username = data.nickName;
+					userinfo.headImgUrl = data.headImgUrl || "../images/defhead.jpg";
+					userinfo.totalAmt = data.totalAmt || 0;
+					userinfo.score = data.score || 0;
+					userinfo.username = data.nickName;
+					userinfo.introducer = data.introducer;
+					userinfo.invateCode = data.invateCode;
+					userinfo.canDrawAmt = data.canDrawAmt || 0;
+					userinfo.cashAmt = data.cashAmt || 0;
+					userinfo.applyAmt = data.applyAmt || 0;
+					userinfo.cstLevelCd = data.cstLevelCd;
+					self.set_userInfo(userinfo);
+					self.on_router_push(self.get_login_back_url());
+				}
+				else {
+					this.vue.$bus.emit("tips", [true, "服务器开小差，请与客服联系"]);
+				}
 			}
 			else {
-				return -1;
+				this.vue.$bus.emit("tips", [true, "服务器开小差，请与客服联系"]);
 			}
 		})
 	},
